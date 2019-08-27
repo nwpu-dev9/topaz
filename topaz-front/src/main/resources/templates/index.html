@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<ul id="topic-list">
+    <li th:object="${topics}" th:each="topic: ${topics}">
+        <h1 th:text="${topic.title}"></h1>
+        <p th:text="${topic.content}"></p>
+    </li>
+</ul>
+
+</body>
+</html>
