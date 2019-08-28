@@ -6,6 +6,9 @@ import org.dev9.topaz.common.entity.User;
 import java.util.List;
 
 public class UserQuery extends AbstractQuery<User> {
+    @QueryWord(column = "user_id", type = MatchType.EQUAL)
+    private Integer userIdEqual;
+
     @QueryWord(column = "phone_number", type = MatchType.LIKE)
     private String phoneNumberLike;
 
@@ -17,10 +20,8 @@ public class UserQuery extends AbstractQuery<User> {
 
     public UserQuery(){}
 
-    public UserQuery(String phoneNumberLike, String nameLike, String profileLike) {
-        this.phoneNumberLike = phoneNumberLike;
-        this.nameLike = nameLike;
-        this.profileLike = profileLike;
+    public void setUserIdEqual(Integer userIdEqual) {
+        this.userIdEqual = userIdEqual;
     }
 
     public void setPhoneNumberLike(String phoneNumberLike) {
