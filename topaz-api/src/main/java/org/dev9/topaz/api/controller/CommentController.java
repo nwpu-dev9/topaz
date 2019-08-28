@@ -63,4 +63,21 @@ public class CommentController {
 
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
+
+    @DeleteMapping("/comment")
+    @ResponseBody
+    public ResponseEntity<RESTfulResponse> deleteComment(@RequestParam Integer commentId){
+        RESTfulResponse response=null;
+
+        if (null == commentId)
+            response=RESTfulResponse.fail();
+
+        if (null != response)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(response);
+
+        commentService.deleteComment(commentId);
+
+        return ResponseEntity.ok(RESTfulResponse.ok());
+    }
 }
