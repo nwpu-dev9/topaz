@@ -2,6 +2,7 @@ package org.dev9.topaz.common.entity;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.List;
 
 // TODO: shiro: Boolean isAdmin?
 
@@ -30,16 +31,21 @@ public class User {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String avatarUrl;
 
+    @OneToMany
+    @JoinTable(name = "favorite_topic")
+    private List<Topic> favoriteTopics;
+
     public User() {
     }
 
-    public User(String phoneNumber, String name, String encryptedPassword, Instant signupTime, String profile, String avatarUrl) {
+    public User(String phoneNumber, String name, String encryptedPassword, Instant signupTime, String profile, String avatarUrl, List<Topic> favoriteTopics) {
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.encryptedPassword = encryptedPassword;
         this.signupTime = signupTime;
         this.profile = profile;
         this.avatarUrl = avatarUrl;
+        this.favoriteTopics = favoriteTopics;
     }
 
     @Override
@@ -53,6 +59,14 @@ public class User {
                 ", profile='" + profile + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
                 '}';
+    }
+
+    public List<Topic> getFavoriteTopics() {
+        return favoriteTopics;
+    }
+
+    public void setFavoriteTopics(List<Topic> favoriteTopics) {
+        this.favoriteTopics = favoriteTopics;
     }
 
     public Integer getUserId() {
