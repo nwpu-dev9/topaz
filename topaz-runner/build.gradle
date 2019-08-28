@@ -1,0 +1,28 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['test']
+        }
+    }
+}
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    archiveBaseName = "topaz"
+}
+
+dependencies {
+    implementation project(":topaz-api")
+    implementation project(":topaz-back")
+    implementation project(":topaz-common")
+    implementation project(":topaz-front")
+}

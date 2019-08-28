@@ -1,0 +1,4 @@
+topaz-*/build
+.idea
+build
+.gradle

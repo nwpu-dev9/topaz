@@ -1,0 +1,2 @@
+rootProject.name = 'topaz'
+include 'topaz-api', 'topaz-back', 'topaz-common', 'topaz-front', 'topaz-runner'
