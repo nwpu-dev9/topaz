@@ -2,7 +2,6 @@ package org.dev9.topaz.common.entity;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Date;
 
 // TODO: shiro: Boolean isAdmin?
 
@@ -13,27 +12,28 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String phoneNumber;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String name;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String encryptedPassword;
 
-    @Column
-    private Date signupTime;
+    @Column(nullable = false)
+    private Instant signupTime;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String profile;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String avatarUrl;
 
-    public User(){}
+    public User() {
+    }
 
-    public User(String phoneNumber, String name, String encryptedPassword, Date signupTime, String profile, String avatarUrl) {
+    public User(String phoneNumber, String name, String encryptedPassword, Instant signupTime, String profile, String avatarUrl) {
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.encryptedPassword = encryptedPassword;
@@ -87,11 +87,11 @@ public class User {
         this.encryptedPassword = encryptedPassword;
     }
 
-    public Date getSignupTime() {
+    public Instant getSignupTime() {
         return signupTime;
     }
 
-    public void setSignupTime(Date signupTime) {
+    public void setSignupTime(Instant signupTime) {
         this.signupTime = signupTime;
     }
 
