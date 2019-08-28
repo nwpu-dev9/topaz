@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.Date;
 
 @Service("ApiCommentService")
@@ -16,26 +17,13 @@ public class CommentServiceImpl implements CommentService {
     @Resource
     private CommentRepository commentRepository;
 
-    @Resource
-    private TopicRepository topicRepository;
-
-    @Resource
-    private UserRepository userRepository;
-
     @Override
     public Boolean saveComment(Comment comment) {
-
-        if (null == userRepository.findById(comment.getCommentUserId()).orElse(null))
-            return false;
-
-        if (null == topicRepository.findById(comment.getTopicId()).orElse(null))
-            return false;
-
         if (null != commentRepository.findById(comment.getCommentId()).orElse(null))
             return false;
 
-        // comment.setCommentId(null); // serial?
-        comment.setCommentTime(new Date());
+        comment.setCommentId(null);
+        comment.setCommentTime(Instant.now());
 
         commentRepository.save(comment);
         return true;

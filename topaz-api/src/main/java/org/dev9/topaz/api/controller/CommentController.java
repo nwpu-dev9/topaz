@@ -5,6 +5,8 @@ import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
 import org.dev9.topaz.common.entity.Comment;
 import org.dev9.topaz.common.exception.UnauthorizedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import javax.annotation.Resource;
 @Controller
 @RequestMapping("/api")
 public class CommentController {
+    private Logger logger= LoggerFactory.getLogger(CommentController.class);
+
     @Resource(name = "ApiCommentService")
     private CommentService commentService;
 
@@ -27,11 +31,13 @@ public class CommentController {
     public ResponseEntity<RESTfulResponse> addComment(Comment comment) {
         RESTfulResponse response=null;
 
-        if (null == response && null == comment.getTopicId())
-            response=RESTfulResponse.fail("please enter topic id");
+        logger.info(comment.toString());
 
-        if (null == response && null == comment.getCommentUserId())
-            response=RESTfulResponse.fail("please enter comment user id");
+        if (null == response && null == comment.getTopic())
+            response=RESTfulResponse.fail("please enter a correct topic id");
+
+        if (null == response && null == comment.getCommenter())
+            response=RESTfulResponse.fail("please enter a correct comment user id");
 
         if (null != response)
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
