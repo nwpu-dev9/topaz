@@ -1,6 +1,7 @@
 package org.dev9.topaz.common.entity;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -10,31 +11,33 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer topicId;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String title;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column
-    private Date postTime;
+    @Column(nullable = false)
+    private Instant postTime;
 
-    @Column
-    private Integer posterUserId;
+    @ManyToOne
+    @JoinColumn(name = "poster_uid", nullable = false)
+    private User poster;
 
-    @Column
+    @Column(nullable = false)
     private Integer favoriteCount;
 
-    @Column
+    @Column(nullable = false)
     private Integer visitedCount;
 
-    public Topic(){}
+    public Topic() {
+    }
 
-    public Topic(String title, String content, Date postTime, Integer posterUserId, Integer favoriteCount, Integer visitedCount) {
+    public Topic(String title, String content, Instant postTime, User poster, Integer favoriteCount, Integer visitedCount) {
         this.title = title;
         this.content = content;
         this.postTime = postTime;
-        this.posterUserId = posterUserId;
+        this.poster = poster;
         this.favoriteCount = favoriteCount;
         this.visitedCount = visitedCount;
     }
@@ -46,7 +49,7 @@ public class Topic {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", postTime=" + postTime +
-                ", posterUserId=" + posterUserId +
+                ", poster=" + poster +
                 ", favoriteCount=" + favoriteCount +
                 ", visitedCount=" + visitedCount +
                 '}';
@@ -64,10 +67,6 @@ public class Topic {
         return topicId;
     }
 
-    public void setTopicId(Integer topicId) {
-        this.topicId = topicId;
-    }
-
     public String getContent() {
         return content;
     }
@@ -76,20 +75,20 @@ public class Topic {
         this.content = content;
     }
 
-    public Date getPostTime() {
+    public Instant getPostTime() {
         return postTime;
     }
 
-    public void setPostTime(Date postTime) {
+    public void setPostTime(Instant postTime) {
         this.postTime = postTime;
     }
 
-    public Integer getPosterUserId() {
-        return posterUserId;
+    public User getPoster() {
+        return poster;
     }
 
-    public void setPosterUserId(Integer posterUserId) {
-        this.posterUserId = posterUserId;
+    public void setPoster(User poster) {
+        this.poster = poster;
     }
 
     public Integer getFavoriteCount() {
