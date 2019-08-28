@@ -19,9 +19,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Boolean saveComment(Comment comment) {
-        if (null != commentRepository.findById(comment.getCommentId()).orElse(null))
-            return false;
-
         comment.setCommentId(null);
         comment.setCommentTime(Instant.now());
 

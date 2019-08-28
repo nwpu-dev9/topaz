@@ -3,6 +3,8 @@ package org.dev9.topaz.api.controller;
 
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
+import org.dev9.topaz.common.dao.repository.TopicRepository;
+import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
 import org.dev9.topaz.common.exception.UnauthorizedException;
 import org.slf4j.Logger;
@@ -11,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -26,14 +25,27 @@ public class CommentController {
     @Resource(name = "ApiCommentService")
     private CommentService commentService;
 
+    @Resource
+    private UserRepository userRepository;
+
+    @Resource
+    private TopicRepository topicRepository;
+
     @PostMapping("/comment")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> addComment(Comment comment) {
+    public ResponseEntity<RESTfulResponse> addComment(@RequestParam Integer commenterId,
+                                                      @RequestParam Integer topicId,
+                                                      @RequestParam String content) {
         RESTfulResponse response=null;
+
+        Comment comment=new Comment();
+        comment.setCommenter(userRepository.findById(commenterId).orElse(null));
+        comment.setTopic(topicRepository.findById(topicId).orElse(null));
+        comment.setContent(content);
 
         logger.info(comment.toString());
 
-        if (null == response && null == comment.getTopic())
+        if (null == comment.getTopic())
             response=RESTfulResponse.fail("please enter a correct topic id");
 
         if (null == response && null == comment.getCommenter())
