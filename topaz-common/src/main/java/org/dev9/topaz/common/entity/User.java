@@ -25,10 +25,10 @@ public class User {
     @Column(nullable = false)
     private Instant signupTime;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String profile;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String avatarUrl;
 
     @OneToMany
