@@ -2,6 +2,7 @@ package org.dev9.topaz.common.entity;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class Topic {
     private Integer visitedCount;
 
     @OneToMany(mappedBy = "topic")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     public Topic() {
     }
@@ -133,5 +134,9 @@ public class Topic {
     public void removeComment(Comment comment) {
         comments.remove(comment);
         comment.setTopic(null);
+    }
+
+    public List<Comment> getComments() {
+        return comments;
     }
 }
