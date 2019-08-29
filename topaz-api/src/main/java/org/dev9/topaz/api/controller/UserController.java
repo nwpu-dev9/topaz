@@ -6,6 +6,7 @@ import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
+import org.dev9.topaz.common.util.HashingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,8 @@ public class UserController {
                 user.setName(name);
             if (null != profile)
                 user.setProfile(profile);
+            if (null != password)
+                user.changePassword(password);
             // TODO: how to get hashed password
             logger.info(user.toString());
         }
