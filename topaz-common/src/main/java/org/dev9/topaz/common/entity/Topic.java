@@ -3,6 +3,8 @@ package org.dev9.topaz.common.entity;
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "TOPIC")
@@ -30,6 +32,9 @@ public class Topic {
     @Column(nullable = false)
     private Integer visitedCount;
 
+    @OneToMany(mappedBy = "topic")
+    private List<Comment> comments;
+
     public Topic() {
     }
 
@@ -40,6 +45,19 @@ public class Topic {
         this.poster = poster;
         this.favoriteCount = favoriteCount;
         this.visitedCount = visitedCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Topic topic = (Topic) o;
+        return topicId.equals(topic.topicId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(topicId);
     }
 
     @Override
@@ -105,5 +123,15 @@ public class Topic {
 
     public void setVisitedCount(Integer visitedCount) {
         this.visitedCount = visitedCount;
+    }
+
+    public void addComment(Comment comment) {
+        comment.setTopic(this);
+        comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setTopic(null);
     }
 }
