@@ -37,7 +37,7 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String avatarUrl;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
     @JoinTable(name = "favorite_topic")
     private List<Topic> favoriteTopics;
 
