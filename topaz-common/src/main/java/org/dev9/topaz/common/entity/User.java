@@ -47,8 +47,7 @@ public class User {
     public User(String name, String phoneNumber, String password, Instant signupTime) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.passwordSalt = HashingUtil.generateSalt(32);
-        this.passwordHash = HashingUtil.hashPassword(password.toCharArray(), this.passwordSalt);
+        this.changePassword(password);
         this.signupTime = signupTime != null ? signupTime : Instant.now();
         this.profile = null;
         this.avatarUrl = null;
@@ -102,6 +101,11 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public void changePassword(String newPassword) {
+        this.passwordSalt = HashingUtil.generateSalt(32);
+        this.passwordHash = HashingUtil.hashPassword(newPassword.toCharArray(), this.passwordSalt);
     }
 
     public Instant getSignupTime() {
