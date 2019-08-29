@@ -64,9 +64,9 @@ public class CommentController {
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 
-    @DeleteMapping("/admin/comment")
+    @DeleteMapping("/admin/comment/{id}")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> deleteComment(@RequestParam Integer commentId){
+    public ResponseEntity<RESTfulResponse> deleteComment(@PathVariable("id") Integer commentId){
         RESTfulResponse response=null;
 
         if (null == commentId)
