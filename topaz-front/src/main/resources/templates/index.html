@@ -6,12 +6,17 @@
 </head>
 <body>
 
-<ul id="topic-list">
-    <li th:object="${topics}" th:each="topic: ${topics}">
-        <a th:text="${topic.title}" th:href="|/topic/${topic.topicId}|"></a>
-        <p th:text="${topic.content}"></p>
-    </li>
-</ul>
+<div id="topic-list">
+    <div class="topic-box" th:object="${topics}" th:each="topic: ${topics}">
+        <a th:text="${topic.title}" th:href="|/topic/${topic.topicId}|">Topic title</a>
+        <div class="topic-box-info">
+            <span>发表时间:<span class="topic-timestamp" th:text="${topic.postTime}"></span></span>
+            <span>评论数:<span th:text="${topic.comments.size()}"></span></span>
+        </div>
+    </div>
+</div>
+<div class="pager">
 
+</div>
 </body>
 </html>
