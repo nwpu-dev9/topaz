@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
-@Controller
+@Controller("ApiCommentController")
 @RequestMapping("/api")
 public class CommentController {
     private Logger logger= LoggerFactory.getLogger(CommentController.class);
@@ -64,7 +64,7 @@ public class CommentController {
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 
-    @DeleteMapping("/comment")
+    @DeleteMapping("/admin/comment")
     @ResponseBody
     public ResponseEntity<RESTfulResponse> deleteComment(@RequestParam Integer commentId){
         RESTfulResponse response=null;
