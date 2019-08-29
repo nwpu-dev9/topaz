@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.util.List;
 
-@Controller
+@Controller("ApiSearchController")
 @RequestMapping("/api")
 public class SearchController {
 
@@ -46,7 +46,7 @@ public class SearchController {
             @RequestParam(required = false) String logicTypeString
     ){
         RESTfulResponse<List<User>> response=null;
-        List<User> users=null;
+        List<User> users;
 
         UserQuery userQuery=new UserQuery(){{
             setCombineLogicType(LogicType.AND);
@@ -82,7 +82,7 @@ public class SearchController {
             @RequestParam(required = false) String logicTypeString
     ){
         RESTfulResponse<List<Topic>> response=null;
-        List<Topic> topics=null;
+        List<Topic> topics;
 
         TopicQuery topicQuery=new TopicQuery(){{
             setCombineLogicType(LogicType.AND);
@@ -116,7 +116,7 @@ public class SearchController {
             @RequestParam(required = false) String logicTypeString
     ){
         RESTfulResponse<List<Comment>> response=null;
-        List<Comment> comments=null;
+        List<Comment> comments;
 
         CommentQuery commentQuery=new CommentQuery(){{
             setCombineLogicType(LogicType.AND);
