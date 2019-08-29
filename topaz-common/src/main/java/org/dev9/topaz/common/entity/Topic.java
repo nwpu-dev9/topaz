@@ -33,7 +33,7 @@ public class Topic {
     @Column(nullable = false)
     private Integer visitedCount;
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(mappedBy = "topic", cascade = {CascadeType.REMOVE})
     private List<Comment> comments = new ArrayList<>();
 
     public Topic() {
