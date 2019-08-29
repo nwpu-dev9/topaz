@@ -62,6 +62,7 @@ public class TopicController {
 
         return ResponseEntity.ok(RESTfulResponse.ok() );
     }
+
     @RequestMapping(path = "/admin/topic/{id}",method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity <RESTfulResponse> deleteTopic(@PathVariable("id") Integer id){

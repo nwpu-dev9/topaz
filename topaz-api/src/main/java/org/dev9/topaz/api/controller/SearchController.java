@@ -1,16 +1,17 @@
 package org.dev9.topaz.api.controller;
 
+import org.dev9.topaz.api.dao.repository.TopicSearchRepository;
 import org.dev9.topaz.api.model.RESTfulResponse;
+import org.dev9.topaz.api.model.result.TopicSearchResult;
 import org.dev9.topaz.common.dao.AbstractQuery;
 import org.dev9.topaz.common.dao.query.CommentQuery;
 import org.dev9.topaz.common.dao.query.TopicQuery;
 import org.dev9.topaz.common.dao.query.UserQuery;
 import org.dev9.topaz.common.dao.repository.CommentRepository;
-import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
-import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class SearchController {
     private UserRepository userRepository;
 
     @Resource
-    private TopicRepository topicRepository;
+    private TopicSearchRepository topicSearchRepository;
 
     @Resource
     private CommentRepository commentRepository;
@@ -75,14 +76,16 @@ public class SearchController {
 
     @PostMapping("/topic/search")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse<List<Topic>>> searchTopic(
+    public ResponseEntity<RESTfulResponse<List<TopicSearchResult>>> searchTopic(
             @RequestParam(required = false) Integer topicId,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content,
-            @RequestParam(required = false) String logicTypeString
+            @RequestParam(required = false) String logicTypeString,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer limit
     ){
-        RESTfulResponse<List<Topic>> response=null;
-        List<Topic> topics;
+        RESTfulResponse<List<TopicSearchResult>> response=null;
+        List<TopicSearchResult> topics;
 
         TopicQuery topicQuery=new TopicQuery(){{
             setCombineLogicType(LogicType.AND);
@@ -94,7 +97,9 @@ public class SearchController {
         if ("OR".equals(logicTypeString))
             topicQuery.setCombineLogicType(AbstractQuery.LogicType.OR);
 
-        topics=topicRepository.findAll(topicQuery.toSpec(), Sort.by("postTime"));
+        topics=topicSearchRepository
+                .findAll(topicQuery.toSpec(), TopicSearchResult.class, PageRequest.of(page, limit, Sort.by("postTime")))
+                .getContent();
 
         if (null == topics)
             response=RESTfulResponse.fail("no such topic");
