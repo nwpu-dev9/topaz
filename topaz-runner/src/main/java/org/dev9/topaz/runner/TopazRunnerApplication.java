@@ -22,17 +22,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import java.util.Collection;
 import java.util.Collections;
 
-@ComponentScan(basePackageClasses = StartupListener.class)
+@SpringBootApplication
 public class TopazRunnerApplication {
 
     public static void main(String[] args) {
-
-        /*
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(TopazRunnerApplication.class);
-        for (String beanName : applicationContext.getBeanDefinitionNames()) {
-            System.out.println(beanName);
-        }
-        */
         ApplicationContext ctx = SpringApplication.run(new Class[]{
                 TopazCommonApplication.class,
                 TopazApiApplication.class,

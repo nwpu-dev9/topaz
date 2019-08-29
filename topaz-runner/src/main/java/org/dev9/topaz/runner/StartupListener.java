@@ -23,6 +23,7 @@ import javax.naming.Context;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Random;
 
 public class StartupListener {
     public StartupListener(TopicRepository topicRepository, CommentRepository commentRepository, UserRepository userRepository) {
@@ -36,14 +37,14 @@ public class StartupListener {
     private UserRepository userRepository;
 
     public void run() {
-        User user1 = new User(null, "zhangsan", "passwd", Instant.now(), null, null, Collections.emptyList());
-        User user2 = new User(null, "lisi", "passwd", Instant.now(), null, null, Collections.emptyList());
+        User user1 = new User("zhangsan", null, "passwd", null);
+        User user2 = new User("lisi", null, "passwd", null);
         userRepository.save(user1);
         userRepository.save(user2);
         for (int i = 1; i <= 23; i++) {
             Topic topic = new Topic(String.format("test post %s", i), String.format("test content %s", i), Instant.now(), user1, 1, 1);
             topicRepository.save(topic);
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < 7 + new Random().nextInt(7); j++) {
                 commentRepository.save(new Comment(String.format("comment content %s", j), Instant.now(), user2, topic));
             }
         }

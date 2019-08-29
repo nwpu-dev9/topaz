@@ -1,26 +1,32 @@
 package org.dev9.topaz.common.entity;
 
+import org.dev9.topaz.common.util.HashingUtil;
+
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 // TODO: shiro: Boolean isAdmin?
 
 @Entity
-@Table(name = "`USER`")
+@Table(name = "USERS")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", unique = true)
     private String phoneNumber;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false, unique = true)
     private String name;
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String encryptedPassword;
+    private String passwordHash;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String passwordSalt;
 
     @Column(nullable = false)
     private Instant signupTime;
@@ -38,26 +44,23 @@ public class User {
     public User() {
     }
 
-    public User(String phoneNumber, String name, String encryptedPassword, Instant signupTime, String profile, String avatarUrl, List<Topic> favoriteTopics) {
-        this.phoneNumber = phoneNumber;
+    public User(String name, String phoneNumber, String password, Instant signupTime) {
         this.name = name;
-        this.encryptedPassword = encryptedPassword;
-        this.signupTime = signupTime;
-        this.profile = profile;
-        this.avatarUrl = avatarUrl;
-        this.favoriteTopics = favoriteTopics;
+        this.phoneNumber = phoneNumber;
+        this.passwordSalt = HashingUtil.generateSalt(32);
+        this.passwordHash = HashingUtil.hashPassword(password.toCharArray(), this.passwordSalt);
+        this.signupTime = signupTime != null ? signupTime : Instant.now();
+        this.profile = null;
+        this.avatarUrl = null;
+        this.favoriteTopics = new ArrayList<>();
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "userId=" + userId +
-                ", phoneNumber='" + phoneNumber + '\'' +
                 ", name='" + name + '\'' +
-                ", encryptedPassword='" + encryptedPassword + '\'' +
                 ", signupTime=" + signupTime +
-                ", profile='" + profile + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
                 '}';
     }
 
@@ -65,16 +68,16 @@ public class User {
         return favoriteTopics;
     }
 
-    public void setFavoriteTopics(List<Topic> favoriteTopics) {
-        this.favoriteTopics = favoriteTopics;
+    public void addFavoriteTopic(Topic topic) {
+        this.favoriteTopics.add(topic);
+    }
+
+    public void removeFavoriteTopic(Topic topic) {
+        this.favoriteTopics.remove(topic);
     }
 
     public Integer getUserId() {
         return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getPhoneNumber() {
@@ -93,12 +96,12 @@ public class User {
         this.name = name;
     }
 
-    public String getEncryptedPassword() {
-        return encryptedPassword;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setEncryptedPassword(String encryptedPassword) {
-        this.encryptedPassword = encryptedPassword;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public Instant getSignupTime() {

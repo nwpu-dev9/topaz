@@ -7,10 +7,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 public class HashingUtil {
-    private final static int ITERATIONS = 8192;
+    private final static int ITERATIONS = 2048;
     private final static int HASH_BITS = 32 * 8;
 
     public static String hashPassword(final char[] password, final String salt) {
@@ -23,6 +24,13 @@ public class HashingUtil {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | DecoderException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String generateSalt(int length) {
+        byte[] salt = new byte[length];
+        new SecureRandom().nextBytes(salt);
+        return Hex.encodeHexString(salt);
+
     }
 
 }
