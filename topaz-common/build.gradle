@@ -13,4 +13,5 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-test'
     compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile 'com.alibaba:druid:1.1.19'
+    compile 'commons-codec:commons-codec:1.9'
 }
