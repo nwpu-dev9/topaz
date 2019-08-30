@@ -144,4 +144,12 @@ public class UserController {
         session.setAttribute("userName", user.getName());
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
+
+    @DeleteMapping("/user/token")
+    @ResponseBody
+    public ResponseEntity<RESTfulResponse> logout(HttpSession session){
+        session.removeAttribute("userId");
+        session.removeAttribute("userName");
+        return ResponseEntity.ok(RESTfulResponse.ok());
+    }
 }
