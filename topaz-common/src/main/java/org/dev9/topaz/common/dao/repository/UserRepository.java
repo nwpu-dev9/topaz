@@ -7,4 +7,6 @@ import th.co.geniustree.springdata.jpa.repository.JpaSpecificationExecutorWithPr
 
 public interface UserRepository extends JpaRepository<User, Integer>,
         JpaSpecificationExecutorWithProjection<User>, JpaSpecificationExecutor<User> {
+
+    User findByName(String name);
 }

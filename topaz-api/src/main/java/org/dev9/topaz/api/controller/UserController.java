@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 
 @Controller("ApiUserController")
 @RequestMapping("/api")
@@ -85,6 +86,32 @@ public class UserController {
 
         userService.addFavoriteTopic(user, topic);
 
+        return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    @PostMapping("/user")
+    @ResponseBody
+    public ResponseEntity<RESTfulResponse> register(@RequestParam String name,
+                                                    @RequestParam String password,
+                                                    @RequestParam(defaultValue = "") String phoneNumber){
+        RESTfulResponse response=null;
+
+        // TODO: available checking
+        if (password.length()<4)
+            response=RESTfulResponse.fail("this password is too weak");
+
+        if (phoneNumber.length()<4)
+            response=RESTfulResponse.fail("phone number is not available");
+
+        if (null == response && null != userRepository.findByName(name))
+            response=RESTfulResponse.fail("this user name exists");
+
+        if (null != response)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        User user=new User(name, phoneNumber, password, Instant.now());
+
+        userRepository.save(user);
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }
