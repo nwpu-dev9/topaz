@@ -1,11 +1,11 @@
 package org.dev9.topaz.common.entity;
 
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Options;
+
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "TOPIC")
@@ -46,6 +46,12 @@ public class Topic {
         this.poster = poster;
         this.favoriteCount = favoriteCount;
         this.visitedCount = visitedCount;
+    }
+
+    public String getRenderedContent() {
+        Asciidoctor parser = Asciidoctor.Factory.create();
+        String output = parser.convert(content, new HashMap<String, Object>());
+        return output;
     }
 
     @Override

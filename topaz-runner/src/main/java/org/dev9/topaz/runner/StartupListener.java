@@ -42,7 +42,13 @@ public class StartupListener {
         userRepository.save(user1);
         userRepository.save(user2);
         for (int i = 1; i <= 23; i++) {
-            Topic topic = new Topic(String.format("test post %s", i), String.format("test content %s", i), Instant.now(), user1, 1, 1);
+            Topic topic = new Topic(
+                    String.format("test post %s", i),
+                    String.format("== post %s\n\n test content %s", i, i),
+                    Instant.now(),
+                    user1,
+                    1,
+                    1);
             topicRepository.save(topic);
             for (int j = 0; j < 7 + new Random().nextInt(7); j++) {
                 commentRepository.save(new Comment(String.format("comment content %s", j), Instant.now(), user2, topic));
