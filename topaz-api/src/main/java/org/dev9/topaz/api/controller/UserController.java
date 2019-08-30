@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
 @Controller("ApiUserController")
@@ -93,7 +94,8 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<RESTfulResponse> register(@RequestParam String name,
                                                     @RequestParam String password,
-                                                    @RequestParam(defaultValue = "") String phoneNumber){
+                                                    @RequestParam(defaultValue = "") String phoneNumber,
+                                                    HttpSession session){
         RESTfulResponse response=null;
 
         // TODO: available checking
@@ -116,6 +118,30 @@ public class UserController {
         User user=new User(name, phoneNumber, password, Instant.now());
 
         userRepository.save(user);
+        session.setAttribute("userId", user.getUserId());
+        session.setAttribute("userName", user.getName());
+        return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    @GetMapping("/user/token")
+    @ResponseBody
+    public ResponseEntity<RESTfulResponse> login(@RequestParam String name,
+                                                 @RequestParam String password,
+                                                 HttpSession session){
+        RESTfulResponse response=null;
+        User user=userRepository.findByName(name);
+
+        if (null == user)
+            response=RESTfulResponse.fail("no such user");
+
+        if (null == response && !user.verifyPassword(password))
+            response = RESTfulResponse.fail("password incorrect");
+
+        if (null != response)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        session.setAttribute("userId", user.getUserId());
+        session.setAttribute("userName", user.getName());
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }

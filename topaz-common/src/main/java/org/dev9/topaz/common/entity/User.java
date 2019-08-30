@@ -63,6 +63,11 @@ public class User {
                 '}';
     }
 
+    public Boolean verifyPassword(String password){
+        String passwordHash=HashingUtil.hashPassword(password.toCharArray(), this.passwordSalt);
+        return passwordHash.equals(this.getPasswordHash());
+    }
+
     public List<Topic> getFavoriteTopics() {
         return favoriteTopics;
     }
