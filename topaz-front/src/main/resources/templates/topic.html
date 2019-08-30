@@ -2,19 +2,20 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="|Topaz - 话题 - ${topic.title}|"></title>
+    <title>Topaz - 话题 - [[${topic.title}]]</title>
 </head>
 <body>
-<article>
-    <h1 th:text="${topic.title}"></h1>
-    <a th:text="${topic.poster.name}" th:href="|/user/${topic.poster.userId}|"></a>
-    <div th:text="${topic.content}"></div>
+<div class="topic-container">
+    <h1 class="topic-title" th:text="${topic.title}"></h1>
+    <a class="topic-poster" th:text="${topic.poster.name}" th:href="|/user/${topic.poster.userId}|"></a>
+    <div class="topic-content" th:utext="${topic.renderedContent}"></div>
     <span class="topic-timestamp" th:text="${topic.postTime}"></span>
-</article>
+</div>
 <div class="comment-container">
     <div th:each="comment: ${topic.comments}">
-        <a th:text="${comment.commenter.name}" th:href="|/user/${comment.commenter.userId}|"></a>
-        <div th:text="${comment.content}"></div>
+        <a class="comment-commenter" th:text="${comment.commenter.name}"
+           th:href="|/user/${comment.commenter.userId}|"></a>
+        <div class="comment-content" th:text="${comment.content}"></div>
     </div>
 </div>
 </body>
