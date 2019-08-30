@@ -106,6 +106,10 @@ public class UserController {
         if (null == response && null != userRepository.findByName(name))
             response=RESTfulResponse.fail("this user name exists");
 
+        if (null == response && null != userRepository.findByPhoneNumber(name))
+            response=RESTfulResponse.fail("this phone number exists");
+
+
         if (null != response)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 

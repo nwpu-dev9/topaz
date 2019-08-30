@@ -9,4 +9,5 @@ public interface UserRepository extends JpaRepository<User, Integer>,
         JpaSpecificationExecutorWithProjection<User>, JpaSpecificationExecutor<User> {
 
     User findByName(String name);
+    User findByPhoneNumber(String phoneNumber);
 }
