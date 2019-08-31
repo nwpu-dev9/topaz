@@ -28,7 +28,7 @@ public abstract class AbstractQuery<T> {
         return combineLogicType;
     }
 
-    protected void setCombineLogicType(LogicType combineLogicType) {
+    public void setCombineLogicType(LogicType combineLogicType) {
         this.combineLogicType = combineLogicType;
     }
 
