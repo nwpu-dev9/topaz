@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style type="text/css">
+        .header{
+            height: 70px;
+            line-height: 10px;
+            border: 1px solid #ccc;
+
+        }
+        .header h2{
+            float: left;
+            font-size: 22px;
+            padding-left: 80px
+        }
+        .index_header{
+            float: right;
+            margin-right: 50px;
+        }
+        .index_header a{
+            width: 50px;
+            height: 28px;
+            display: inline-block;
+            border: 1px solid #679e43;
+            background: green;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 15px;
+            color: #fff;
+            text-decoration: none;
+        }
+        .index_header p{
+            display: inline-block;
+        }
+        body,html{
+            margin:0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h2>Topaz后台管理系统</h2>
+    <div class="index_header">
+        <p>
+            <span>欢迎您 !</span>
+            <span style="color: #fff21b" th:text="${user.name}"> </span>
+        </p>
+        <!--a href="登录背景.html" target="right">退出 </a-->
+    </div>
+</div>
+</body>
+</html>
