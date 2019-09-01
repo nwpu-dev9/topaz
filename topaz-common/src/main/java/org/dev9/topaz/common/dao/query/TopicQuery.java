@@ -3,27 +3,28 @@ package org.dev9.topaz.common.dao.query;
 import org.dev9.topaz.common.dao.AbstractQuery;
 import org.dev9.topaz.common.entity.Topic;
 
-public class TopicQuery extends AbstractQuery<Topic> {
-    @QueryWord(column = "topic_id", type = MatchType.EQUAL)
-    private Integer topicIdEqual;
+import java.util.List;
 
+public class TopicQuery extends AbstractQuery<Topic> {
     @QueryWord(column = "title", type = MatchType.LIKE)
-    private String titleLike;
+    private List<String> titleLikeList;
 
     @QueryWord(column = "content", type = MatchType.LIKE)
-    private String contentLike;
+    private List<String> contentLikeList;
 
-    public TopicQuery() { }
-
-    public void setTopicIdEqual(Integer topicIdEqual) {
-        this.topicIdEqual = topicIdEqual;
+    public List<String> getTitleLikeList() {
+        return titleLikeList;
     }
 
-    public void setTitleLike(String titleLike) {
-        this.titleLike = titleLike;
+    public void setTitleLikeList(List<String> titleLikeList) {
+        this.titleLikeList = titleLikeList;
     }
 
-    public void setContentLike(String contentLike) {
-        this.contentLike = contentLike;
+    public List<String> getContentLikeList() {
+        return contentLikeList;
+    }
+
+    public void setContentLikeList(List<String> contentLikeList) {
+        this.contentLikeList = contentLikeList;
     }
 }

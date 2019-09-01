@@ -1,11 +1,7 @@
 package org.dev9.topaz.common.entity;
 
-import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.Options;
-
 import javax.persistence.*;
-import java.time.Instant;
-import java.util.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "TOPIC")
@@ -14,57 +10,33 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer topicId;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column
     private String title;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column
     private String content;
 
-    @Column(nullable = false)
-    private Instant postTime;
+    @Column
+    private Date postTime;
 
-    @ManyToOne
-    @JoinColumn(name = "poster_uid", nullable = false)
-    private User poster;
+    @Column
+    private Integer posterUserId;
 
-    @Column(nullable = false)
+    @Column
     private Integer favoriteCount;
 
-    @Column(nullable = false)
+    @Column
     private Integer visitedCount;
 
-    @OneToMany(mappedBy = "topic", cascade = {CascadeType.REMOVE})
-    private List<Comment> comments = new ArrayList<>();
+    public Topic(){}
 
-    public Topic() {
-    }
-
-    public Topic(String title, String content, Instant postTime, User poster, Integer favoriteCount, Integer visitedCount) {
+    public Topic(String title, String content, Date postTime, Integer posterUserId, Integer favoriteCount, Integer visitedCount) {
         this.title = title;
         this.content = content;
         this.postTime = postTime;
-        this.poster = poster;
+        this.posterUserId = posterUserId;
         this.favoriteCount = favoriteCount;
         this.visitedCount = visitedCount;
-    }
-
-    public String getRenderedContent() {
-        Asciidoctor parser = Asciidoctor.Factory.create();
-        String output = parser.convert(content, new HashMap<String, Object>());
-        return output;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Topic topic = (Topic) o;
-        return topicId.equals(topic.topicId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(topicId);
     }
 
     @Override
@@ -74,7 +46,7 @@ public class Topic {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", postTime=" + postTime +
-                ", poster=" + poster +
+                ", posterUserId=" + posterUserId +
                 ", favoriteCount=" + favoriteCount +
                 ", visitedCount=" + visitedCount +
                 '}';
@@ -92,6 +64,10 @@ public class Topic {
         return topicId;
     }
 
+    public void setTopicId(Integer topicId) {
+        this.topicId = topicId;
+    }
+
     public String getContent() {
         return content;
     }
@@ -100,20 +76,20 @@ public class Topic {
         this.content = content;
     }
 
-    public Instant getPostTime() {
+    public Date getPostTime() {
         return postTime;
     }
 
-    public void setPostTime(Instant postTime) {
+    public void setPostTime(Date postTime) {
         this.postTime = postTime;
     }
 
-    public User getPoster() {
-        return poster;
+    public Integer getPosterUserId() {
+        return posterUserId;
     }
 
-    public void setPoster(User poster) {
-        this.poster = poster;
+    public void setPosterUserId(Integer posterUserId) {
+        this.posterUserId = posterUserId;
     }
 
     public Integer getFavoriteCount() {
@@ -130,19 +106,5 @@ public class Topic {
 
     public void setVisitedCount(Integer visitedCount) {
         this.visitedCount = visitedCount;
-    }
-
-    public void addComment(Comment comment) {
-        comment.setTopic(this);
-        comments.add(comment);
-    }
-
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
-        comment.setTopic(null);
-    }
-
-    public List<Comment> getComments() {
-        return comments;
     }
 }
