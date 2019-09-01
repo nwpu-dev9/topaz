@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Topaz - 话题列表</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"> </script>
+    <script>
+
+        function delete_id(id, page, limit) {
+            $.ajax({
+                url: "/api/admin/topic/" + id,
+                type: "delete",
+                success: function (msg) {
+                   $.ajax(
+                       {
+                           url: "/admin/topic/" + "?page=" +page +"&limit=" +limit,
+                           type: "get",
+                           success: function (msg) {
+                               document.write(msg);
+                               document.close();
+                           }
+                       }
+                   )
+                }
+
+            })
+        }
+    </script>
+</head>
+<body>
+
+<ul id="topic-list"  style="height: 500px; overflow: auto">
+    <li th:id="${topic.topicId}" th:object="${topics}" th:each="topic: ${topics}">
+        <a th:text="${topic.title}" th:href="|/admin/topic/${topic.topicId}|">Topic title</a>
+        <h1 class="topic-box-info">
+            <span>发表时间:<span class="topic-timestamp" th:text="${topic.postTime}"></span></span>
+            <span>评论数:<span th:text="${topic.comments.size()}"></span></span>
+        </h1>
+        <div class="topic-box-delete">
+            <button th:onclick="'delete_id('+${topic.topicId}+','+${page}+','+${limit}+');'" ><span class="button">删除</span></button>
+        </div>
+    </li>
+</ul>
+<nav id="post-nav">
+    <span class="prev">
+        <a th:href="@{/admin/topic/(page=${page -1}, limit=${limit})}" th:if="${page}>0">
+            <span class="button">上一页</span>
+        </a>
+    </span>
+    <span class="next">
+        <a th:href="@{/admin/topic/(page=${page +1}, limit=${limit})}" th:if="${page} < ${pageCount -1}">
+            <span class="button">下一页</span>
+        </a>
+    </span>
+</nav>
+</body>
+</html>
