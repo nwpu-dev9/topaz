@@ -1,7 +1,7 @@
 package org.dev9.topaz.common.entity;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Table(name = "MESSAGE")
@@ -10,36 +10,49 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer messageId;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column
     private String content;
 
-    @Column(nullable = false)
-    private Instant sentTime;
+    @Column
+    private Date sentTime;
 
-    @Column(nullable = false)
+    @Column
     private Boolean isLooked;
 
-    @ManyToOne
-    @JoinColumn(name = "sender_uid", nullable = false)
-    private User sender;
+    @Column
+    private Integer sentUserId;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_uid", nullable = false)
-    private User receiver;
+    @Column
+    private Integer receiveUserId;
 
-    public Message() {
-    }
+    public Message(){}
 
-    public Message(String content, Instant sentTime, Boolean isLooked, User sender, User receiver) {
+    public Message(String content, Date sentTime, Boolean isLooked, Integer sentUserId, Integer receiveUserId) {
         this.content = content;
         this.sentTime = sentTime;
         this.isLooked = isLooked;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.sentUserId = sentUserId;
+        this.receiveUserId = receiveUserId;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "messageId=" + messageId +
+                ", content='" + content + '\'' +
+                ", sentTime=" + sentTime +
+                ", isLooked=" + isLooked +
+                ", sentUserId=" + sentUserId +
+                ", receiveUserId=" + receiveUserId +
+                '}';
     }
 
     public Integer getMessageId() {
         return messageId;
+    }
+
+    public void setMessageId(Integer messageId) {
+        this.messageId = messageId;
     }
 
     public String getContent() {
@@ -50,11 +63,11 @@ public class Message {
         this.content = content;
     }
 
-    public Instant getSentTime() {
+    public Date getSentTime() {
         return sentTime;
     }
 
-    public void setSentTime(Instant sentTime) {
+    public void setSentTime(Date sentTime) {
         this.sentTime = sentTime;
     }
 
@@ -66,20 +79,20 @@ public class Message {
         isLooked = looked;
     }
 
-    public User getSender() {
-        return sender;
+    public Integer getSentUserId() {
+        return sentUserId;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setSentUserId(Integer sentUserId) {
+        this.sentUserId = sentUserId;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public Integer getReceiveUserId() {
+        return receiveUserId;
     }
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public void setReceiveUserId(Integer receiveUserId) {
+        this.receiveUserId = receiveUserId;
     }
 }
 

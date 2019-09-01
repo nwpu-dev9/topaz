@@ -1,7 +1,7 @@
 package org.dev9.topaz.common.entity;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Table(name = "COMMENT")
@@ -10,29 +10,25 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column
     private String content;
 
-    @Column(nullable = false)
-    private Instant commentTime;
+    @Column
+    private Date commentTime;
 
-    @ManyToOne
-    @JoinColumn(name = "commenter_id", nullable = false)
-    private User commenter;
+    @Column
+    private Integer commentUserId;
 
-    @ManyToOne
-    @JoinColumn(name = "topic_id", nullable = false)
-    private Topic topic;
+    @Column
+    private Integer topicId;
 
+    public Comment() {}
 
-    public Comment() {
-    }
-
-    public Comment(String content, Instant commentTime, User commenter, Topic topic) {
+    public Comment(String content, Date commentTime, Integer commentUserId, Integer topicId) {
         this.content = content;
         this.commentTime = commentTime;
-        this.commenter = commenter;
-        this.topic = topic;
+        this.commentUserId = commentUserId;
+        this.topicId = topicId;
     }
 
     @Override
@@ -41,8 +37,8 @@ public class Comment {
                 "commentId=" + commentId +
                 ", content='" + content + '\'' +
                 ", commentTime=" + commentTime +
-                ", commenter=" + commenter.getUserId() +
-                ", topic=" + topic.getTopicId() +
+                ", commentUserId=" + commentUserId +
+                ", topicId=" + topicId +
                 '}';
     }
 
@@ -62,27 +58,27 @@ public class Comment {
         this.content = content;
     }
 
-    public Instant getCommentTime() {
+    public Date getCommentTime() {
         return commentTime;
     }
 
-    public void setCommentTime(Instant commentTime) {
+    public void setCommentTime(Date commentTime) {
         this.commentTime = commentTime;
     }
 
-    public User getCommenter() {
-        return commenter;
+    public Integer getCommentUserId() {
+        return commentUserId;
     }
 
-    public void setCommenter(User commenter) {
-        this.commenter = commenter;
+    public void setCommentUserId(Integer commentUserId) {
+        this.commentUserId = commentUserId;
     }
 
-    public Topic getTopic() {
-        return topic;
+    public Integer getTopicId() {
+        return topicId;
     }
 
-    public void setTopic(Topic topic) {
-        this.topic = topic;
+    public void setTopicId(Integer topicId) {
+        this.topicId = topicId;
     }
 }
