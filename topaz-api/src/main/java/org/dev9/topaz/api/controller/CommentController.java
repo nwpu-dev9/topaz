@@ -1,6 +1,7 @@
 package org.dev9.topaz.api.controller;
 
 
+import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
@@ -35,9 +36,7 @@ public class CommentController {
     @ResponseBody
     public ResponseEntity<RESTfulResponse> addComment(@RequestParam Integer commenterId,
                                                       @RequestParam Integer topicId,
-                                                      @RequestParam String content) {
-        RESTfulResponse response=null;
-
+                                                      @RequestParam String content) throws ApiNotFoundException {
         Comment comment=new Comment();
         comment.setCommenter(userRepository.findById(commenterId).orElse(null));
         comment.setTopic(topicRepository.findById(topicId).orElse(null));
@@ -46,38 +45,21 @@ public class CommentController {
         logger.info(comment.toString());
 
         if (null == comment.getTopic())
-            response=RESTfulResponse.fail("please enter a correct topic id");
+            throw new ApiNotFoundException("no such topic");
 
-        if (null == response && null == comment.getCommenter())
-            response=RESTfulResponse.fail("please enter a correct comment user id");
-
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(response);
+        if (null == comment.getCommenter())
+            throw new ApiNotFoundException("no such user");
 
         Boolean isSuccess=commentService.saveComment(comment);
-
         if (!isSuccess)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(RESTfulResponse.fail("please enter a correct comment id"));
-
-        return ResponseEntity.ok(RESTfulResponse.ok());
+            throw new ApiNotFoundException("please enter a correct comment id");
+        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
     @DeleteMapping("/admin/comment/{id}")
     @ResponseBody
     public ResponseEntity<RESTfulResponse> deleteComment(@PathVariable("id") Integer commentId){
-        RESTfulResponse response=null;
-
-        if (null == commentId)
-            response=RESTfulResponse.fail();
-
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(response);
-
         commentService.deleteComment(commentId);
-
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }

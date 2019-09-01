@@ -1,6 +1,7 @@
 package org.dev9.topaz.api.controller;
 
 import org.apache.coyote.Response;
+import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
 import org.dev9.topaz.api.service.TopicService;
@@ -31,12 +32,11 @@ public class TopicController {
     @Resource
     private UserRepository userRepository;
 
-    @RequestMapping(path = "/post", method = RequestMethod.POST)
+    @PostMapping(path = "/post")
     @ResponseBody
     public ResponseEntity<RESTfulResponse> addTopic(@RequestParam String title,
-                                                    @RequestParam  String content,
-                                                    @RequestParam Integer posterId) {
-        RESTfulResponse response = null;
+                                                    @RequestParam String content,
+                                                    @RequestParam Integer posterId) throws ApiNotFoundException {
         Topic topic = new Topic();
         topic.setTitle(title);
         topic.setContent(content);
@@ -44,40 +44,17 @@ public class TopicController {
 
         logger.info(topic.toString());
 
-        if (topic.getPoster() == null) {
-            response = RESTfulResponse.fail("no poster!");
-        }
-        if (topic.getTitle() == null) {
-            response = RESTfulResponse.fail("no title!");
-        }
-        if (topic.getContent() == null) {
-            response = RESTfulResponse.fail("no content!");
-        }
-        if (null != response )
-            return ResponseEntity.status(HttpStatus.NOT_FOUND )
-                       .body(response );
+        if (topic.getPoster() == null)
+            throw new ApiNotFoundException("no such poster");
 
         topicService.saveTopic(topic) ;
-
-
-        return ResponseEntity.ok(RESTfulResponse.ok() );
+        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
-    @RequestMapping(path = "/admin/topic/{id}",method = RequestMethod.DELETE)
+    @DeleteMapping(path = "/admin/topic/{id}")
     @ResponseBody
     public ResponseEntity <RESTfulResponse> deleteTopic(@PathVariable("id") Integer id){
-        RESTfulResponse response = null;
-        if(id==null ) response = RESTfulResponse.fail("There is no id！");
-        Topic topic =topicRepository.findById(id).orElse(null);
-
-        if (topic == null){
-            response = RESTfulResponse.fail("There is no topic！");
-        }
-
-        if(null != response )
-            return ResponseEntity.status(HttpStatus.NOT_FOUND ).body(response );
-
-        topicService.DeleteTopic(topic);
-        return ResponseEntity.ok(RESTfulResponse.ok() );
+        topicRepository.deleteById(id);
+        return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }

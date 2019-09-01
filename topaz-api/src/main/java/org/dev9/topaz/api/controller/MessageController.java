@@ -1,5 +1,6 @@
 package org.dev9.topaz.api.controller;
 
+import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.springframework.http.HttpStatus;
@@ -18,18 +19,11 @@ public class MessageController {
 
     @DeleteMapping("/message/{id}")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> deleteMessage(@PathVariable(name = "id") Integer messageId){
-        RESTfulResponse response=null;
-
+    public ResponseEntity<RESTfulResponse> deleteMessage(@PathVariable(name = "id") Integer messageId) throws ApiNotFoundException {
         if (null == messageId)
-            response=RESTfulResponse.fail();
-
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(response);
+            throw new ApiNotFoundException("no such message");
 
         messageRepository.deleteById(messageId);
-
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }

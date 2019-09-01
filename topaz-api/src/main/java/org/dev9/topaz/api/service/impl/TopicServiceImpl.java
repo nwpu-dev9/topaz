@@ -16,10 +16,6 @@ public class TopicServiceImpl implements TopicService {
         topicRepository.save(topic);
     }
 
-    @Override
-    public void DeleteTopic(Topic topic) {
-        topicRepository.delete(topic);
-    }
 }
 
 
