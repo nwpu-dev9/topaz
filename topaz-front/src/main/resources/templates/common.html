@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+    <th:block th:fragment="stylesheets">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.2/css/all.min.css">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
+    </th:block>
+</head>
+<body>
+<div th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a href="/" class="navbar-brand">Topaz</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible"
+                    aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar-collapsible">
+                <div class="search mr-auto">
+                    <form action="/search" method="get">
+                        <input name="query" th:type="text" placeholder="话题或问题">
+                        <button class="search-button" type="submit"><span class="fas fa-search"></span></button>
+                    </form>
+                </div>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a th:href="@{/register}" class="btn btn-outline-light btn-success">注册</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/login}" class="btn btn-outline-light btn-primary">登录 </a>
+                    </li>
+                </ul>
+            </div>
+            <!--
+            <div class="am-topbar-right header-login" id="user">
+                <div class="am-dropdown" data-am-dropdown="{boundary: '.am-topbar'}">
+
+                    <img src="" class="am-dropdown-toggle" id="usr-avt">
+                    <ul class="am-dropdown-content">
+                        <li><a th:href="@{/home}"><span class="am-icon-home myicon"></span>主页</a></li>
+                        <li><a th:href="@{/mail}"><span class="am-icon-envelope myicon"></span>私信</a></li>
+                        <li><a th:href="@{/star}"><span class="am-icon-star myicon"></span>收藏</a></li>
+                        <li><a th:href="@{/config}"><span class="am-icon-cog myicon"></span>设置</a></li>
+                        <li class="admin"><a th:href="@{/admin}"><span
+                                class="am-icon-user-secret myicon"></span>版块管理</a></li>
+                        <li><a th:href="@{/index}" id="logout"><span class="am-icon-power-off myicon"></span>退出</a></li>
+                    </ul>
+                </div>
+            </div>
+            -->
+            <!--登录成功后的发帖功能-->
+            <!--
+            <div class="am-topbar-right header-login">
+                <div class="am-dropdown" data-am-dropdown="{boundary: '.am-topbar'}">
+                    <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm am-dropdown-toggle">
+                        发布 <span class="am-icon-caret-down"></span>
+                    </button>
+                    <ul class="am-dropdown-content">
+                        <li><a th:href="@{/send}">发帖</a></li>
+                        <li><a th:href="@{/send}">提问</a></li>
+                    </ul>
+                </div>
+            </div>
+            -->
+        </div>
+    </nav>
+</div>
+</body>
+</html>
