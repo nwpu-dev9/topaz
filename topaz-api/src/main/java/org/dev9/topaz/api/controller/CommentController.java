@@ -10,6 +10,7 @@ import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
 import org.dev9.topaz.common.enums.PermissionType;
 import org.dev9.topaz.common.exception.UnauthorizedException;
+import org.dev9.topaz.common.util.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class CommentController {
         Comment comment=new Comment();
         comment.setCommenter(userRepository.findById(commenterId).orElse(null));
         comment.setTopic(topicRepository.findById(topicId).orElse(null));
-        comment.setContent(content);
+        comment.setContent(SensitiveWordUtil.filter(content));
 
         logger.info(comment.toString());
 

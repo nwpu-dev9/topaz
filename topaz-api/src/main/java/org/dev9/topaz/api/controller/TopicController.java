@@ -11,6 +11,7 @@ import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.enums.PermissionType;
+import org.dev9.topaz.common.util.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class TopicController {
 
         Topic topic = new Topic();
         topic.setTitle(title);
-        topic.setContent(content);
+        topic.setContent(SensitiveWordUtil.filter(content));
         topic.setFavoriteCount(0);
         topic.setPostTime(Instant.now());
         topic.setVisitedCount(0);

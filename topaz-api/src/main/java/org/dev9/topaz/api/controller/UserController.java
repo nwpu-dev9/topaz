@@ -11,6 +11,7 @@ import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.enums.PermissionType;
+import org.dev9.topaz.common.util.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,7 @@ public class UserController {
         if (null != name)
             user.setName(name);
         if (null != profile)
-            user.setProfile(profile);
+            user.setProfile(SensitiveWordUtil.filter(profile));
         if (null != password)
             user.changePassword(password);
         // TODO: how to get hashed password
@@ -98,6 +99,9 @@ public class UserController {
 
         if (phoneNumber.length()<4)
             throw new ApiNotFoundException("phone number is not available");
+
+        if (SensitiveWordUtil.isContainSensitiveWords(name))
+            throw new ApiNotFoundException("user name not available");
 
         if (null != userRepository.findByName(name))
             throw new ApiNotFoundException("user name exists");

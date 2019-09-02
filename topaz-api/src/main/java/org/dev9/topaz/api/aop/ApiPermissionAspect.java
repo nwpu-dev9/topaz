@@ -44,18 +44,18 @@ public class ApiPermissionAspect extends AbstractPermissionAspect {
         List<PermissionType> permissionTypes= Arrays.asList(permission.value());
 
         if (null == request)
-            throw new ApiUnauthorizedException();
+            throw new ApiUnauthorizedException("impossible error");
 
         logger.info("CHECK PERMISSION: "+request.getRequestURL().toString());
         HttpSession session=request.getSession();
         if (null == session.getAttribute("userId"))
-            throw new ApiUnauthorizedException();
+            throw new ApiUnauthorizedException("please login");
 
         Integer userId=(Integer)session.getAttribute("userId");
         User user=userRepository.findById(userId).orElse(null);
 
         if (!checkPermissoin(permissionTypes, user))
-            throw new ApiUnauthorizedException();
+            throw new ApiUnauthorizedException("permission error");
 
         logger.info("PERMISSION PASSED: "+request.getRequestURL().toString());
         Object ret= null;

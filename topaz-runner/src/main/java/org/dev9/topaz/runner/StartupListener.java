@@ -6,25 +6,10 @@ import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.stereotype.Component;
+import org.dev9.topaz.common.util.SensitiveWordUtil;
 
-import javax.annotation.Resource;
-import javax.naming.Context;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.TemporalAmount;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Random;
 
 public class StartupListener {
@@ -39,6 +24,8 @@ public class StartupListener {
     private UserRepository userRepository;
 
     public void run() {
+        initUtils();
+
         Random random = new Random();
         User user1 = new User("张三", null, "passwd", null, false);
         User user2 = new User("李四", null, "passwd", null, true);
@@ -60,5 +47,17 @@ public class StartupListener {
                 commentRepository.save(new Comment(String.format("评论内容 %s\n评论内容 %s", j, j), baseTime.plus(Duration.ofHours(j * 2)), userRepository.findById(random.nextInt(2) + 1).get(), topic));
             }
         }
+
+        // initUtils();
+    }
+
+    private void initUtils(){
+        try {
+            SensitiveWordUtil.initWords();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // System.out.println(SensitiveWordUtil.filter("钦定接班人"));
     }
 }
