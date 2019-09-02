@@ -1,12 +1,16 @@
 package org.dev9.topaz.api.controller;
 
+import jnr.ffi.annotations.In;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
+import org.dev9.topaz.api.exception.ApiUnauthorizedException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.UserService;
+import org.dev9.topaz.common.annotation.Permission;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
+import org.dev9.topaz.common.enums.PermissionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -61,10 +65,17 @@ public class UserController {
 
     @PostMapping(value = "/user/{id}/favorite")
     @ResponseBody
+    @Permission(PermissionType.USER)
     public ResponseEntity<RESTfulResponse> addFavoriteTopic(@PathVariable("id") Integer id,
-                                                            @RequestParam Integer topicId) throws ApiNotFoundException {
+                                                            @RequestParam Integer topicId,
+                                                            HttpSession session) throws ApiNotFoundException, ApiUnauthorizedException {
         User user = userRepository.findById(id).orElse(null);
         Topic topic = topicRepository.findById(topicId).orElse(null);
+        Integer sessionUserId=(Integer)session.getAttribute("userId");
+
+        if (!sessionUserId.equals(id))
+            throw new ApiUnauthorizedException();
+
         if (user == null)
             throw new ApiNotFoundException("no such user");
 
