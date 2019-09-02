@@ -1,22 +1,65 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!--suppress ALL -->
+<html lang="zh-hans en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Topaz - 话题列表</title>
+    <th:block th:replace="common::stylesheets">
+    </th:block>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/index.js}"></script>
 </head>
 <body>
-
-<div id="topic-list">
-    <div class="topic-box" th:object="${topics}" th:each="topic: ${topics}">
-        <a th:text="${topic.title}" th:href="|/topic/${topic.topicId}|">Topic title</a>
-        <div class="topic-box-info">
-            <span>发表时间:<span class="topic-timestamp" th:text="${topic.postTime}"></span></span>
-            <span>评论数:<span th:text="${topic.comments.size()}"></span></span>
+<div th:replace="common :: header"></div>
+<div class="container">
+    <div class="content">
+        <div class="module-name">
+            <i class="far fa-comments"></i>所有话题
         </div>
+        <div class="module">
+            <div id="topic-list">
+                <div class="topic-item" th:object="${topics}" th:each="topic: ${topics}">
+                    <div>
+                        <a class="topic-title" th:text="${topic.title}" th:href="|/topic/${topic.topicId}|">Topic
+                            title</a>
+                        <div class="topic-comment-count" th:text="${topic.comments.size()}"></div>
+                    </div>
+                    <div>
+                        <label>发表时间:</label>
+                        <span class="topic-timestamp" th:text="${formatter.format(topic.postTime)}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav aria-label="pager">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${page==1}? 'disabled'">
+                    <a class="page-link" th:href="${page!=1}? @{/(page=${page-1})} : '#'">
+                        上一页
+                    </a>
+                </li>
+                <th:block th:each="iter: ${pager}">
+                    <li class="page-item" th:classappend="${page==iter}? 'active'">
+                        <a class="page-link" th:href="${page!=iter}? @{/(page=${iter})}:'#'">
+                            [[${iter}]]
+                        </a>
+                    </li>
+                </th:block>
+                <li class="page-item" th:classappend="${page==pager.pageCount}? 'disabled'">
+                    <a class="page-link"
+                       th:href="${page!=pager.pageCount}? @{/(page=${page+1})} : '#'">
+                        下一页
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
-<div class="pager">
-
+<div class="footer">
+    Footer
 </div>
+
 </body>
 </html>

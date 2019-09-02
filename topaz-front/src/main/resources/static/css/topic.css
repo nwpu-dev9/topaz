@@ -1,0 +1,37 @@
+.topic-title {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.topic-secondary {
+    font-size: small;
+    border-bottom: 1px #e1e1e1 solid;
+}
+
+.comment-container {
+    margin-top: 1.8rem;
+    border-top: 1px #e1e1e1 solid;
+}
+
+.comment-item {
+    border-bottom: 1px #e1e1e1 solid;
+    padding: 1rem;
+}
+
+.comment-commenter {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.comment-timestamp {
+    font-size: smaller;
+}
+
+.comments-header {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.topic-content {
+    margin-top: 1.8rem;
+}

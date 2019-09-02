@@ -3,19 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Topaz - 话题 - [[${topic.title}]]</title>
+    <th:block th:replace="common::stylesheets">
+    </th:block>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/topic.css}">
 </head>
 <body>
-<div class="topic-container">
-    <h1 class="topic-title" th:text="${topic.title}"></h1>
-    <a class="topic-poster" th:text="${topic.poster.name}" th:href="|/user/${topic.poster.userId}|"></a>
-    <div class="topic-content" th:utext="${topic.renderedContent}"></div>
-    <span class="topic-timestamp" th:text="${topic.postTime}"></span>
+<div th:replace="common :: header">
 </div>
-<div class="comment-container">
-    <div th:each="comment: ${topic.comments}">
-        <a class="comment-commenter" th:text="${comment.commenter.name}"
-           th:href="|/user/${comment.commenter.userId}|"></a>
-        <div class="comment-content" th:text="${comment.content}"></div>
+<div class="container">
+    <div class="content">
+        <div class="topic-container">
+            <div class="topic-title" th:text="${topic.title}"></div>
+            <div class="topic-secondary">
+                <a class="topic-poster" th:text="${topic.poster.name}" th:href="|/user/${topic.poster.userId}|"></a>
+                <span class="topic-timestamp" th:text="${formatter.format(topic.postTime)}"></span>
+            </div>
+            <div class="topic-content" th:utext="${topic.content}"></div>
+        </div>
+        <div class="comment-container">
+            <span class="comments-header">
+                评论([[${topic.comments.size()}]])
+            </span>
+            <div class="comment-item" th:each="comment: ${topic.comments}">
+                <div class="d-flex flex-row">
+                    <div class="mr-auto">
+                        <a class="comment-commenter" th:href="|/user/${comment.commenter.userId}|">
+                            [[${comment.commenter.name}]]
+                        </a>
+                    </div>
+                    <div class="ml-auto">
+                        <span class="comment-timestamp">[[${formatter.format(comment.commentTime)}]]</span>
+                    </div>
+                </div>
+                <div class="comment-content" th:text="${comment.content}"></div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
