@@ -1,6 +1,5 @@
 package org.dev9.topaz.api.controller;
 
-import org.apache.catalina.WebResourceRoot;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.common.annotation.Permission;
@@ -10,7 +9,6 @@ import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.enums.PermissionType;
 import org.dev9.topaz.common.util.SensitiveWordUtil;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +45,10 @@ public class MessageController {
                                                       @RequestParam String content,
                                                       HttpSession session) throws ApiNotFoundException {
         Integer senderId=(Integer) session.getAttribute("userId");
+
+        if (receiverId.equals(senderId))
+            throw new ApiNotFoundException("send messages to oneself is disallowed");
+
         User receiver=userRepository.findById(receiverId).orElse(null);
         User sender=userRepository.findById(senderId).orElse(null);
 
