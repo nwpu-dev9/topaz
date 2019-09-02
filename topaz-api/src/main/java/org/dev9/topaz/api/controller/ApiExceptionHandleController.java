@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.lang.reflect.UndeclaredThrowableException;
+
 @ControllerAdvice
 public class ApiExceptionHandleController {
     private Logger logger= LoggerFactory.getLogger(ApiExceptionHandleController.class);
@@ -27,7 +29,7 @@ public class ApiExceptionHandleController {
         if (e instanceof ApiNotFoundException)
             responseEntity=ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
-        if (e instanceof ApiUnauthorizedException)
+        if (e instanceof ApiUnauthorizedException || e instanceof UndeclaredThrowableException)
             responseEntity=ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 
         if (e instanceof ApiForbiddenException)

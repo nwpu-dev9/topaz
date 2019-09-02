@@ -94,7 +94,7 @@ public class UserController {
         if (null != userRepository.findByPhoneNumber(name))
             throw new ApiNotFoundException("phone number exists");
 
-        User user=new User(name, phoneNumber, password, Instant.now());
+        User user=new User(name, phoneNumber, password, Instant.now(), false);
 
         userRepository.save(user);
         session.setAttribute("userId", user.getUserId());

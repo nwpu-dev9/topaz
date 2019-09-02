@@ -37,8 +37,8 @@ public class StartupListener {
     private UserRepository userRepository;
 
     public void run() {
-        User user1 = new User("zhangsan", null, "passwd", null);
-        User user2 = new User("lisi", null, "passwd", null);
+        User user1 = new User("zhangsan", null, "passwd", null, false);
+        User user2 = new User("lisi", null, "passwd", null, true);
         userRepository.save(user1);
         userRepository.save(user2);
         for (int i = 1; i <= 23; i++) {
