@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.2/css/all.min.css">
         <link rel="stylesheet" th:href="@{/css/common.css}">
+        <script src="/js/common.js"></script>
     </th:block>
 </head>
 <body>
@@ -20,18 +21,32 @@
             </button>
             <div class="collapse navbar-collapse" id="navbar-collapsible">
                 <div class="search mr-auto">
-                    <form action="/search" method="get">
-                        <input name="query" th:type="text" placeholder="话题或问题">
-                        <button class="search-button" type="submit"><span class="fas fa-search"></span></button>
+                    <form action="/search" method="get" class="form-inline">
+                        <input name="query" th:type="text" placeholder="话题或问题" class="form-control">
+                        <button class="search-button btn btn-outline-light" type="submit">
+                            <span class="fas fa-search"></span>
+                        </button>
                     </form>
                 </div>
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a th:href="@{/register}" class="btn btn-outline-light btn-success">注册</a>
-                    </li>
-                    <li>
-                        <a th:href="@{/login}" class="btn btn-outline-light btn-primary">登录 </a>
-                    </li>
+                <ul class="navbar-nav" th:switch="${session.userId!=null}">
+                    <th:block th:case="false">
+                        <li class="nav-item">
+                            <a th:href="@{/register}" class="btn btn-outline-light btn-success">注册</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/login}" class="btn btn-outline-light btn-primary">登录</a>
+                        </li>
+                    </th:block>
+                    <th:block th:case="true">
+                        <li class="nav-item">
+                            <a th:href="|/user/${session.userId}|" class="nav-link active">
+                                [[${session.userName}]]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0);" onclick="logout()" class="btn btn-outline-light">退出</a>
+                        </li>
+                    </th:block>
                 </ul>
             </div>
             <!--
@@ -67,6 +82,9 @@
             -->
         </div>
     </nav>
+</div>
+<div class="footer" th:fragment="footer">
+    A group project.
 </div>
 </body>
 </html>

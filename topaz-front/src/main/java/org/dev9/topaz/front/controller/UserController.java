@@ -28,4 +28,14 @@ public class UserController {
         params.put("user", user.get());
         return new ModelAndView("user", params);
     }
+
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 }
