@@ -1,0 +1,108 @@
+.topic-item {
+    width: 100%;
+    padding-top: 1.2em;
+    padding-bottom: 1.2em;
+}
+
+.topic-title {
+    font-size: larger;
+}
+
+.topic-title a {
+    color: #444444;
+}
+
+.topic-info {
+    font-size: smaller;
+}
+
+.main {
+    padding: 0 20px;
+    background-color: #fff;
+    border-right: 1px solid #e6e6e6;
+    width: 750px;
+    float: left;
+}
+
+.main .title {
+    position: relative;
+    min-height: 66px;
+    padding: 20px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.main .title h1 {
+    width: 500px;
+    font-size: 20px;
+    color: #444444;
+}
+
+.post-list {
+    padding: 0 20px;
+}
+
+.post {
+    position: relative;
+    z-index: 0;
+    height: 120px;
+    padding: 14px 0 14px 80px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.post > a {
+    position: absolute;
+    left: 0;
+    top: 18px;
+}
+
+.post a img {
+    border-radius: 4px;
+    width: 70px;
+}
+
+.post .content {
+    margin-top: 5px;
+}
+
+.post .content h4 > a {
+    font-size: 15px;
+    color: #155faa;
+}
+
+.post .content h4 > a:hover {
+    color: #499ef3;
+}
+
+.post .description {
+    float: left;
+    margin-top: 25px;
+    color: #999999;
+    font-size: 13px;
+}
+
+.post .description .user a {
+    color: #666;
+}
+
+.post .description .user a:hover {
+    color: #155faa;
+}
+
+
+.info {
+    width: 248px;
+    float: left;
+    padding: 20px 15px 20px 25px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.info > div {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 10px;
+}
+
+.info h3 {
+    color: #444444;
+}
