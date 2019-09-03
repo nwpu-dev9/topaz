@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-hans en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Topaz - 编辑</title>
+    <th:block th:replace="common::stylesheets">
+    </th:block>
+    <link rel="stylesheet" th:href="@{/css/edit.css}">
+    <script src="https://cdn.jsdelivr.net/npm/ckeditor@4.12.1/ckeditor.js"></script>
+</head>
+<body>
+<div th:replace="common :: header">
+</div>
+<div class="container">
+    <div class="content">
+        <form action="#" class="form">
+            <div class="form-group">
+                <label for="title">标题</label>
+                <input id="title" name="title" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="content">内容</label>
+                <textarea id="content" name="content"></textarea>
+            </div>
+            <button type="submit" onsubmit="">提交</button>
+        </form>
+    </div>
+</div>
+<script>
+    CKEDITOR.config.language = "zh-cn";
+    CKEDITOR.replace("content");
+</script>
+</body>
+</html>
