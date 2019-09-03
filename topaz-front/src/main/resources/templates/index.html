@@ -7,23 +7,32 @@
     <th:block th:replace="common::stylesheets">
     </th:block>
     <link rel="stylesheet" th:href="@{/css/index.css}">
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/index.js}"></script>
 </head>
 <body>
 <div th:replace="common :: header"></div>
 <div class="container">
     <div class="content">
-        <div class="module-name">
-            <i class="far fa-comments"></i>所有话题
+        <div class="module-titlebar">
+            <div class="d-flex flex-row">
+                <div class="mr-auto module-name">
+                    <i class="far fa-comments"></i><span>所有话题</span>
+                </div>
+                <div>
+                    <a href="/topic/new" class="new-topic-link">
+                        <i class="fas fa-plus text-success"></i>
+                        创建新话题
+                    </a>
+                </div>
+            </div>
         </div>
         <div class="module">
             <div id="topic-list">
                 <div class="topic-item" th:object="${topics}" th:each="topic: ${topics}">
                     <div>
-                        <a class="topic-title" th:text="${topic.title}" th:href="|/topic/${topic.topicId}|">Topic
-                            title</a>
+                        <a class="topic-title" th:text="${topic.title}" th:href="|/topic/${topic.topicId}|">
+                            Topic title
+                        </a>
                         <div class="topic-comment-count" th:text="${topic.comments.size()}"></div>
                     </div>
                     <div>
@@ -57,9 +66,7 @@
         </nav>
     </div>
 </div>
-<div class="footer">
-    Footer
+<div th:replace="common::footer">
 </div>
-
 </body>
 </html>
