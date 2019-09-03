@@ -1,5 +1,6 @@
 package org.dev9.topaz.api.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.common.annotation.Permission;
@@ -45,6 +46,9 @@ public class MessageController {
                                                       @RequestParam String content,
                                                       HttpSession session) throws ApiNotFoundException {
         Integer senderId=(Integer) session.getAttribute("userId");
+
+        if (StringUtils.isBlank(content))
+            throw new ApiNotFoundException("content can not be empty");
 
         if (receiverId.equals(senderId))
             throw new ApiNotFoundException("send messages to oneself is disallowed");

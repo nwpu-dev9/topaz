@@ -1,6 +1,7 @@
 package org.dev9.topaz.api.controller;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
@@ -51,6 +52,9 @@ public class CommentController {
         comment.setContent(SensitiveWordUtil.filter(content));
 
         logger.info(comment.toString());
+
+        if (StringUtils.isBlank(content))
+            throw new ApiNotFoundException("content can not be empty");
 
         if (null == comment.getTopic())
             throw new ApiNotFoundException("no such topic");

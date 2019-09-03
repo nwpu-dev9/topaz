@@ -14,12 +14,15 @@ import org.dev9.topaz.common.enums.PermissionType;
 import org.dev9.topaz.common.util.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
@@ -92,7 +95,8 @@ public class UserController {
     public ResponseEntity<RESTfulResponse> register(@RequestParam String name,
                                                     @RequestParam String password,
                                                     @RequestParam(defaultValue = "") String phoneNumber,
-                                                    HttpSession session) throws ApiNotFoundException {
+                                                    HttpSession session,
+                                                    HttpServletResponse response) throws ApiNotFoundException {
         // TODO: available checking
         if (password.length()<4)
             throw new ApiNotFoundException("password is too weak");
@@ -112,8 +116,7 @@ public class UserController {
         User user=new User(name, phoneNumber, password, Instant.now(), false);
 
         userRepository.save(user);
-        session.setAttribute("userId", user.getUserId());
-        session.setAttribute("userName", user.getName());
+        userLogin(user, session, response);
         return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
@@ -121,7 +124,8 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<RESTfulResponse> login(@RequestParam String name,
                                                  @RequestParam String password,
-                                                 HttpSession session) throws ApiNotFoundException {
+                                                 HttpSession session,
+                                                 HttpServletResponse response) throws ApiNotFoundException {
         User user=userRepository.findByName(name);
 
         if (null == user)
@@ -130,8 +134,7 @@ public class UserController {
         if (!user.verifyPassword(password))
             throw new ApiNotFoundException("password incorrect");
 
-        session.setAttribute("userId", user.getUserId());
-        session.setAttribute("userName", user.getName());
+        userLogin(user, session, response);
         return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
@@ -140,6 +143,14 @@ public class UserController {
     public ResponseEntity<RESTfulResponse> logout(HttpSession session){
         session.removeAttribute("userId");
         session.removeAttribute("userName");
+
         return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    private void userLogin(User user, HttpSession session, HttpServletResponse response){
+        session.setAttribute("userId", user.getUserId());
+        session.setAttribute("userName", user.getName());
+        response.addCookie(new Cookie("userId", user.getUserId().toString()));
+        response.addCookie(new Cookie("userName", user.getName()));
     }
 }

@@ -1,5 +1,6 @@
 package org.dev9.topaz.api.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.Response;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
@@ -45,6 +46,12 @@ public class TopicController {
                                                     HttpServletRequest request
     ) throws ApiNotFoundException {
         Integer posterId=(Integer) request.getSession().getAttribute("userId");
+
+        if (StringUtils.isBlank(content))
+            throw new ApiNotFoundException("content can not be empty");
+
+        if (StringUtils.isBlank(title))
+            throw new ApiNotFoundException("title can not be empty");
 
         Topic topic = new Topic();
         topic.setTitle(title);
