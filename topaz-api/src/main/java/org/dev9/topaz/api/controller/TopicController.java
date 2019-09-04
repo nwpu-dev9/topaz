@@ -66,8 +66,11 @@ public class TopicController {
         if (topic.getPoster() == null)
             throw new ApiNotFoundException("no such poster");
 
-        topicService.saveTopic(topic) ;
-        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
+        Topic savedTopic=topicService.saveTopic(topic) ;
+        RESTfulResponse<Integer> response=RESTfulResponse.ok();
+
+        response.setData(savedTopic.getTopicId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping(path = "/admin/topic/{id}")
