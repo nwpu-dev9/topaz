@@ -35,6 +35,7 @@ public class ApiExceptionHandleController {
         if (e instanceof ApiForbiddenException)
             responseEntity=ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
 
+        logger.error("RESPONSE: "+response.getMessage());
         return responseEntity;
     }
 }

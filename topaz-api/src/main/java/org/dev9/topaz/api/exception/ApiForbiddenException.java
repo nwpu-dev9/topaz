@@ -1,6 +1,6 @@
 package org.dev9.topaz.api.exception;
 
-public class ApiForbiddenException extends Exception{
+public class ApiForbiddenException extends RuntimeException{
     public ApiForbiddenException(){
         super();
     }

@@ -1,6 +1,6 @@
 package org.dev9.topaz.api.exception;
 
-public class ApiUnauthorizedException extends Exception{
+public class ApiUnauthorizedException extends RuntimeException{
     public ApiUnauthorizedException(){
         super();
     }

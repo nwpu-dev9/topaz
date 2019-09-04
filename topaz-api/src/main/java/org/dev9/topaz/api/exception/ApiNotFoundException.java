@@ -1,6 +1,6 @@
 package org.dev9.topaz.api.exception;
 
-public class ApiNotFoundException extends Exception{
+public class ApiNotFoundException extends RuntimeException{
     public ApiNotFoundException(){
         super();
     }
