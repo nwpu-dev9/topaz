@@ -38,6 +38,7 @@
 
 .new-comment-container {
     margin-top: 2rem;
+    padding-top: 1rem;
 }
 
 .new-comment-container.disabled {
@@ -45,7 +46,7 @@
 }
 
 .login-required-message {
-    font-size: 2rem;
+    font-size: 1.5rem;
     text-align: center;
     padding: 1rem;
 }

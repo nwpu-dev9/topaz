@@ -29,10 +29,27 @@
 <div th:replace="common::footer">
 </div>
 <script src="https://cdn.jsdelivr.net/npm/ckeditor@4.12.1/ckeditor.js"></script>
-<script>
-    CKEDITOR.config.language = "zh-cn";
-    CKEDITOR.replace("content");
+<th:block th:switch="${topic==null}">
+    <script th:case="true">
+        var url = "/api/topic";
+        var method = "POST";
+    </script>
+    <script th:inline="javascript" th:case="false">
+        var url = "/api/topic/" + [[${topic.topicId}]];
+        var method = "PUT";
+        var title = [[${topic.title}]];
+        var content = [[${topic.content}]];
+    </script>
+</th:block>
 
+<script th:inline="javascript">
+    CKEDITOR.config.language = "zh-cn";
+    CKEDITOR.config.removePlugins = 'elementspath';
+    CKEDITOR.replace("content");
+    if (method == "PUT") {
+        CKEDITOR.instances.content = content;
+        $("#title").val(title);
+    }
     $(".form").bind("submit", function (event) {
         event.preventDefault();
         try_submit();
@@ -40,8 +57,8 @@
 
     function try_submit() {
         $.ajax({
-            url: "/api/topic",
-            method: "POST",
+            url: url,
+            method: method,
             dataType: "json",
             data: {
                 "title": $("#title").val(),

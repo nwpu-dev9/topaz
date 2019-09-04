@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-hans en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Topaz - 私信</title>
+    <th:block th:replace="common::stylesheets">
+    </th:block>
+    <link rel="stylesheet" th:href="@{/css/message.css}">
+</head>
+<body>
+<div th:replace="common :: header">
+</div>
+<div class="container">
+    <div class="content">
+        <table class="table">
+            <tr th:each="message: ${messages}">
+                <td th:text="${message.sender.name}"></td>
+                <td th:text="${formatter.format(message.sentTime)}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div th:replace="common::footer">
+</div>
+</body>
+</html>

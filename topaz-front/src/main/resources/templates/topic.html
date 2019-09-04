@@ -17,12 +17,15 @@
             <div class="topic-secondary">
                 <a class="topic-poster" th:text="${topic.poster.name}" th:href="|/user/${topic.poster.userId}|"></a>
                 <span class="topic-timestamp" th:text="${formatter.format(topic.postTime)}"></span>
+                <a th:href="@{/topic/edit(topicId=${topic.topicId})}" th:if="${topic.poster.userId.equals(session.userId)}">
+                    编辑
+                </a>
             </div>
             <div class="topic-content" th:utext="${topic.content}"></div>
         </div>
         <div class="comment-container">
             <span class="comments-header">
-                评论([[${topic.comments.size()}]])
+                评论&nbsp;([[${topic.comments.size()}]])
             </span>
             <div class="comment-item" th:each="comment: ${topic.comments}">
                 <div class="d-flex flex-row">
@@ -41,6 +44,7 @@
         <th:block th:switch="${session.userId==null}">
             <div class="new-comment-container" th:case="false">
                 <h2>发表新评论</h2>
+                <div id="alert" class="alert" style="display: none;"></div>
                 <form id="new-comment-form" action="#">
                     <div class="form-group">
                         <textarea id="comment-content" name="content"></textarea>
@@ -49,7 +53,7 @@
                 </form>
             </div>
             <div th:case="true" class="login-required-message">
-                <a th:href="@{/login(return=${#request.getRequestURI()}+'#new-comment-form')}">登录</a>后才能发表评论
+                <a th:href="@{/login(return=${#request.getRequestURL()}+'#new-comment-form')}">登录</a>后才能发表评论
             </div>
         </th:block>
     </div>
@@ -60,6 +64,7 @@
 <script th:inline="javascript">
     var topicId = [[${topic.topicId}]];
     CKEDITOR.config.language = "zh-cn";
+    CKEDITOR.config.removePlugins = 'elementspath';
     CKEDITOR.replace("comment-content");
     $("#new-comment-form").bind("submit", function (event) {
         event.preventDefault();
@@ -79,6 +84,14 @@
                 CKEDITOR.instances['comment-content'].setData("");
                 $("#comment-content").val("");
                 window.location.reload();
+            },
+            error: function (xhr) {
+                var resp = JSON.parse(xhr.responseText);
+                var element = $("#alert");
+                element.removeClass("alert-success alert-danger");
+                element.addClass("alert-danger");
+                element.text(resp.message);
+                element.show();
             }
         });
     }

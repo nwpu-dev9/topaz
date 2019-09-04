@@ -54,14 +54,15 @@ public class TopicController {
     }
 
     @GetMapping("/topic/edit")
-    public ModelAndView editTopic(@RequestParam Integer id, HttpSession session) {
+    public ModelAndView editTopic(@RequestParam Integer topicId, HttpSession session, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         Map<String, Object> params = new HashMap<>();
-        Optional<Topic> topic = topicRepository.findById(id);
+        Optional<Topic> topic = topicRepository.findById(topicId);
         if (!topic.isPresent()) {
             throw new PageNotFoundException();
         }
         if (!topic.get().getPoster().getUserId().equals(session.getAttribute("userId"))) {
-            throw new UnauthorizedException();
+            redirectAttributes.addAttribute("return", request.getRequestURL());
+            return new ModelAndView("redirect:/login", new ModelMap());
         }
         params.put("topic", topic.get());
         return new ModelAndView("edit", params);
