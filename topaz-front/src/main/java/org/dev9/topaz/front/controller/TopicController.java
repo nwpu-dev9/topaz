@@ -1,12 +1,9 @@
 package org.dev9.topaz.front.controller;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.exception.PageNotFoundException;
 import org.dev9.topaz.common.exception.UnauthorizedException;
-import org.springframework.data.domain.Example;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
