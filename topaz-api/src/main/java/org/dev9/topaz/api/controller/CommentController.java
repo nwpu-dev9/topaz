@@ -1,12 +1,17 @@
 package org.dev9.topaz.api.controller;
 
 
+import org.apache.commons.lang3.StringUtils;
+import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
+import org.dev9.topaz.common.annotation.Permission;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
+import org.dev9.topaz.common.enums.PermissionType;
 import org.dev9.topaz.common.exception.UnauthorizedException;
+import org.dev9.topaz.common.util.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 @Controller("ApiCommentController")
 @RequestMapping("/api")
@@ -33,51 +39,40 @@ public class CommentController {
 
     @PostMapping("/comment")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> addComment(@RequestParam Integer commenterId,
+    @Permission(PermissionType.USER)
+    public ResponseEntity<RESTfulResponse> addComment(/*@RequestParam Integer commenterId,*/
+                                                      HttpSession session,
                                                       @RequestParam Integer topicId,
-                                                      @RequestParam String content) {
-        RESTfulResponse response=null;
+                                                      @RequestParam String content) throws ApiNotFoundException {
+        Integer commenterId=(Integer) session.getAttribute("userId");
 
         Comment comment=new Comment();
         comment.setCommenter(userRepository.findById(commenterId).orElse(null));
         comment.setTopic(topicRepository.findById(topicId).orElse(null));
-        comment.setContent(content);
+        comment.setContent(SensitiveWordUtil.filter(content));
 
         logger.info(comment.toString());
 
+        if (StringUtils.isBlank(content))
+            throw new ApiNotFoundException("content can not be empty");
+
         if (null == comment.getTopic())
-            response=RESTfulResponse.fail("please enter a correct topic id");
+            throw new ApiNotFoundException("no such topic");
 
-        if (null == response && null == comment.getCommenter())
-            response=RESTfulResponse.fail("please enter a correct comment user id");
-
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(response);
+        if (null == comment.getCommenter())
+            throw new ApiNotFoundException("no such user");
 
         Boolean isSuccess=commentService.saveComment(comment);
-
         if (!isSuccess)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(RESTfulResponse.fail("please enter a correct comment id"));
-
-        return ResponseEntity.ok(RESTfulResponse.ok());
+            throw new ApiNotFoundException("please enter a correct comment id");
+        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
     @DeleteMapping("/admin/comment/{id}")
     @ResponseBody
+    @Permission(PermissionType.ADMIN)
     public ResponseEntity<RESTfulResponse> deleteComment(@PathVariable("id") Integer commentId){
-        RESTfulResponse response=null;
-
-        if (null == commentId)
-            response=RESTfulResponse.fail();
-
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(response);
-
         commentService.deleteComment(commentId);
-
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }

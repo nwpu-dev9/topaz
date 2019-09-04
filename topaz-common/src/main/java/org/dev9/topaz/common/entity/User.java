@@ -41,10 +41,13 @@ public class User {
     @JoinTable(name = "favorite_topic")
     private List<Topic> favoriteTopics;
 
+    @Column(nullable = false)
+    private boolean admin;
+
     public User() {
     }
 
-    public User(String name, String phoneNumber, String password, Instant signupTime) {
+    public User(String name, String phoneNumber, String password, Instant signupTime, boolean admin) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.changePassword(password);
@@ -52,6 +55,7 @@ public class User {
         this.profile = null;
         this.avatarUrl = null;
         this.favoriteTopics = new ArrayList<>();
+        this.admin=admin;
     }
 
     @Override
@@ -61,6 +65,14 @@ public class User {
                 ", name='" + name + '\'' +
                 ", signupTime=" + signupTime +
                 '}';
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     public Boolean verifyPassword(String password){

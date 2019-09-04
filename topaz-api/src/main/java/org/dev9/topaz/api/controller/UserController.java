@@ -1,21 +1,28 @@
 package org.dev9.topaz.api.controller;
 
+import jnr.ffi.annotations.In;
+import org.dev9.topaz.api.exception.ApiNotFoundException;
+import org.dev9.topaz.api.exception.ApiUnauthorizedException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.UserService;
+import org.dev9.topaz.common.annotation.Permission;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
-import org.dev9.topaz.common.util.HashingUtil;
+import org.dev9.topaz.common.enums.PermissionType;
+import org.dev9.topaz.common.util.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
@@ -39,55 +46,48 @@ public class UserController {
                                                                  @RequestParam(required = false) String password,
                                                                  @RequestParam(required = false) String phoneNumber,
                                                                  @RequestParam(required = false) String name,
-                                                                 @RequestParam(required = false) String profile) {
-        RESTfulResponse response = null;
+                                                                 @RequestParam(required = false) String profile) throws ApiNotFoundException {
         User user = userRepository.findById(id).orElse(null);
 
         if (null == user)
-            response = RESTfulResponse.fail("user not exist");
+            throw new ApiNotFoundException("no such user");
 
-        if (null == response) {
-            if (null != phoneNumber)
-                user.setPhoneNumber(phoneNumber);
-            if (null != name)
-                user.setName(name);
-            if (null != profile)
-                user.setProfile(profile);
-            if (null != password)
-                user.changePassword(password);
-            // TODO: how to get hashed password
-            logger.info(user.toString());
-        }
-
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(response);
+        if (null != phoneNumber)
+            user.setPhoneNumber(phoneNumber);
+        if (null != name)
+            user.setName(name);
+        if (null != profile)
+            user.setProfile(SensitiveWordUtil.filter(profile));
+        if (null != password)
+            user.changePassword(password);
+        // TODO: how to get hashed password
+        logger.info(user.toString());
 
         userService.updateUserInformation(user);
-        return ResponseEntity.ok(RESTfulResponse.ok());
+        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
-    @RequestMapping(value = "/user/{id}/favorite", method = RequestMethod.POST)
+    @PostMapping(value = "/user/{id}/favorite")
     @ResponseBody
+    @Permission(PermissionType.USER)
     public ResponseEntity<RESTfulResponse> addFavoriteTopic(@PathVariable("id") Integer id,
-                                                            @RequestParam Integer topicId) {
-        RESTfulResponse response = null;
-
+                                                            @RequestParam Integer topicId,
+                                                            HttpSession session) throws ApiNotFoundException, ApiUnauthorizedException {
         User user = userRepository.findById(id).orElse(null);
         Topic topic = topicRepository.findById(topicId).orElse(null);
+        Integer sessionUserId=(Integer)session.getAttribute("userId");
+
+        if (!sessionUserId.equals(id))
+            throw new ApiUnauthorizedException();
+
         if (user == null)
-            response = RESTfulResponse.fail("no such user");
+            throw new ApiNotFoundException("no such user");
 
         if (topic == null)
-            response = RESTfulResponse.fail("no such topic");
-
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(response);
+            throw new ApiNotFoundException("no such topic");
 
         userService.addFavoriteTopic(user, topic);
-
-        return ResponseEntity.ok(RESTfulResponse.ok());
+        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
     @PostMapping("/user")
@@ -95,53 +95,62 @@ public class UserController {
     public ResponseEntity<RESTfulResponse> register(@RequestParam String name,
                                                     @RequestParam String password,
                                                     @RequestParam(defaultValue = "") String phoneNumber,
-                                                    HttpSession session){
-        RESTfulResponse response=null;
-
+                                                    HttpSession session,
+                                                    HttpServletResponse response) throws ApiNotFoundException {
         // TODO: available checking
         if (password.length()<4)
-            response=RESTfulResponse.fail("this password is too weak");
+            throw new ApiNotFoundException("password is too weak");
 
         if (phoneNumber.length()<4)
-            response=RESTfulResponse.fail("phone number is not available");
+            throw new ApiNotFoundException("phone number is not available");
 
-        if (null == response && null != userRepository.findByName(name))
-            response=RESTfulResponse.fail("this user name exists");
+        if (SensitiveWordUtil.isContainSensitiveWords(name))
+            throw new ApiNotFoundException("user name not available");
 
-        if (null == response && null != userRepository.findByPhoneNumber(name))
-            response=RESTfulResponse.fail("this phone number exists");
+        if (null != userRepository.findByName(name))
+            throw new ApiNotFoundException("user name exists");
 
+        if (null != userRepository.findByPhoneNumber(name))
+            throw new ApiNotFoundException("phone number exists");
 
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-
-        User user=new User(name, phoneNumber, password, Instant.now());
+        User user=new User(name, phoneNumber, password, Instant.now(), false);
 
         userRepository.save(user);
-        session.setAttribute("userId", user.getUserId());
-        session.setAttribute("userName", user.getName());
-        return ResponseEntity.ok(RESTfulResponse.ok());
+        userLogin(user, session, response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
-    @GetMapping("/user/token")
+    @PostMapping("/user/token")
     @ResponseBody
     public ResponseEntity<RESTfulResponse> login(@RequestParam String name,
                                                  @RequestParam String password,
-                                                 HttpSession session){
-        RESTfulResponse response=null;
+                                                 HttpSession session,
+                                                 HttpServletResponse response) throws ApiNotFoundException {
         User user=userRepository.findByName(name);
 
         if (null == user)
-            response=RESTfulResponse.fail("no such user");
+            throw new ApiNotFoundException("no such user");
 
-        if (null == response && !user.verifyPassword(password))
-            response = RESTfulResponse.fail("password incorrect");
+        if (!user.verifyPassword(password))
+            throw new ApiNotFoundException("password incorrect");
 
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        userLogin(user, session, response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
+    }
 
+    @DeleteMapping("/user/token")
+    @ResponseBody
+    public ResponseEntity<RESTfulResponse> logout(HttpSession session){
+        session.removeAttribute("userId");
+        session.removeAttribute("userName");
+
+        return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    private void userLogin(User user, HttpSession session, HttpServletResponse response){
         session.setAttribute("userId", user.getUserId());
         session.setAttribute("userName", user.getName());
-        return ResponseEntity.ok(RESTfulResponse.ok());
+        response.addCookie(new Cookie("userId", user.getUserId().toString()));
+        response.addCookie(new Cookie("userName", user.getName()));
     }
 }

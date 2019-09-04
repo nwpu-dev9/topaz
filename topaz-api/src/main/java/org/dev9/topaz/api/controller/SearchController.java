@@ -1,6 +1,7 @@
 package org.dev9.topaz.api.controller;
 
 import org.dev9.topaz.api.dao.repository.TopicSearchRepository;
+import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.model.result.TopicSearchResult;
 import org.dev9.topaz.common.dao.AbstractQuery;
@@ -45,8 +46,7 @@ public class SearchController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String profile,
             @RequestParam(required = false) String logicTypeString
-    ){
-        RESTfulResponse<List<User>> response=null;
+    ) throws ApiNotFoundException {
         List<User> users;
 
         UserQuery userQuery=new UserQuery(){{
@@ -63,13 +63,9 @@ public class SearchController {
         users=userRepository.findAll(userQuery.toSpec(), Sort.by("signupTime"));
 
         if (null == users)
-            response=RESTfulResponse.fail("no such user");
+            throw new ApiNotFoundException("no such user");
 
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(response);
-
-        response=RESTfulResponse.ok();
+        RESTfulResponse<List<User>> response=RESTfulResponse.ok();
         response.setData(users);
         return ResponseEntity.ok(response);
     }
@@ -83,8 +79,7 @@ public class SearchController {
             @RequestParam(required = false) String logicTypeString,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "20") Integer limit
-    ){
-        RESTfulResponse<List<TopicSearchResult>> response=null;
+    ) throws ApiNotFoundException {
         List<TopicSearchResult> topics;
 
         TopicQuery topicQuery=new TopicQuery(){{
@@ -102,13 +97,9 @@ public class SearchController {
                 .getContent();
 
         if (null == topics)
-            response=RESTfulResponse.fail("no such topic");
+            throw new ApiNotFoundException("no such topic");
 
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(response);
-
-        response=RESTfulResponse.ok();
+        RESTfulResponse<List<TopicSearchResult>> response=RESTfulResponse.ok();
         response.setData(topics);
         return ResponseEntity.ok(response);
     }
@@ -119,8 +110,7 @@ public class SearchController {
             @RequestParam(required = false) Integer commentId,
             @RequestParam(required = false) String content,
             @RequestParam(required = false) String logicTypeString
-    ){
-        RESTfulResponse<List<Comment>> response=null;
+    ) throws ApiNotFoundException {
         List<Comment> comments;
 
         CommentQuery commentQuery=new CommentQuery(){{
@@ -135,13 +125,9 @@ public class SearchController {
         comments=commentRepository.findAll(commentQuery.toSpec(), Sort.by("commentTime"));
 
         if (null == comments)
-            response=RESTfulResponse.fail("no such comment");
+            throw new ApiNotFoundException("no such comment");
 
-        if (null != response)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(response);
-
-        response=RESTfulResponse.ok();
+        RESTfulResponse<List<Comment>> response=RESTfulResponse.ok();
         response.setData(comments);
         return ResponseEntity.ok(response);
     }
