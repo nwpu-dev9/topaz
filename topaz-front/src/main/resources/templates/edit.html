@@ -45,7 +45,7 @@
             dataType: "json",
             data: {
                 "title": $("#title").val(),
-                "content": CKEDITOR.instance.content.getData()
+                "content": CKEDITOR.instances.content.getData()
             },
             success: function (resp) {
                 window.location.href = "/topic/" + resp.data;
