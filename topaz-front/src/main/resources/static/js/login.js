@@ -27,6 +27,11 @@ $(function () {
     $("#submit").bind("click", try_login);
 });
 
+$("#login-form").bind("submit", function (event) {
+    event.preventDefault();
+    try_login();
+})
+
 function try_login() {
     let name = $("#name").val();
     let password = $("#password").val();
@@ -41,11 +46,10 @@ function try_login() {
 
         statusCode: {
             201: function (result) {
-                window.location.href = "/";
+                window.location.href = return_url;
             },
             404: function (result) {
-                setError(result.responseJSON.message);
-                console.log("1313", result.responseJSON.message);
+                show_message(result.responseJSON.message,false);
             }
         },
     });
