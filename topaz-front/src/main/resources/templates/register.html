@@ -13,13 +13,11 @@
 <div class="container">
     <div class="content">
         <div class="top">
-            <a href="/">
-                <img src="/image/register.jpg">
-            </a>
+            <img src="/image/register.jpg">
             <h1>注册新用户</h1>
         </div>
         <div class="register-form-container">
-            <form action="#" onsubmit="try_register()">
+            <form action="#" id="register-form">
                 <div class="form-group">
                     <input class="form-control" th:type="text" id="name" placeholder="用户名">
                     <div class="invalid-feedback">请输入长度在6到30之间的用户名</div>

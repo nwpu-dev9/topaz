@@ -17,6 +17,11 @@ function clear_message() {
     e.hide();
 }
 
+$("#register-form").bind("submit", function (event) {
+    event.preventDefault();
+    try_register();
+});
+
 function on_validation(element, valid) {
     element.removeClass("is-invalid is-valid");
     if (valid) {
