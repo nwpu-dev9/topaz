@@ -16,4 +16,5 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile 'com.alibaba:druid:1.1.19'
     compile 'th.co.geniustree.springdata.jpa:specification-with-projections:2.0.0'
+    compile 'org.apache.commons:commons-lang3:3.9'
 }

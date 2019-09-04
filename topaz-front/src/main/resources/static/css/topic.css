@@ -39,3 +39,13 @@
 .new-comment-container {
     margin-top: 2rem;
 }
+
+.new-comment-container.disabled {
+    display: none;
+}
+
+.login-required-message {
+    font-size: 2rem;
+    text-align: center;
+    padding: 1rem;
+}

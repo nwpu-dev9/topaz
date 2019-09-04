@@ -36,7 +36,7 @@
     $(".form").bind("submit", function (event) {
         event.preventDefault();
         try_submit();
-    })
+    });
 
     function try_submit() {
         $.ajax({
@@ -45,10 +45,10 @@
             dataType: "json",
             data: {
                 "title": $("#title").val(),
-                "content": $("#content").val()
+                "content": CKEDITOR.instances.content.getData()
             },
             success: function (resp) {
-                alert(JSON.stringify(resp));
+                window.location.href = "/topic/" + resp.data;
             }
         });
     }

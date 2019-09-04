@@ -1,13 +1,11 @@
 package org.dev9.topaz.front.controller;
 
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 @ControllerAdvice
 public class TimestampFormatterAdvice {

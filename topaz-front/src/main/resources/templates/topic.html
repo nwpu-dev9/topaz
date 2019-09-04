@@ -32,32 +32,56 @@
                         </a>
                     </div>
                     <div class="ml-auto">
-                        <span class="comment-timestamp">[[${formatter.format(comment.commentTime)}]]</span>
+                        <span class="comment-timestamp" th:text="${formatter.format(comment.commentTime)}"></span>
                     </div>
                 </div>
-                <div class="comment-content" th:text="${comment.content}"></div>
+                <div class="comment-content" th:utext="${comment.content}"></div>
             </div>
         </div>
-        <div class="new-comment-container">
-            <h2>发表新评论</h2>
-            <form id="new-comment-form" action="#">
-                <div class="form-group">
-                    <textarea id="comment-content" name="content"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success">发表</button>
-            </form>
-        </div>
+        <th:block th:switch="${session.userId==null}">
+            <div class="new-comment-container" th:case="false">
+                <h2>发表新评论</h2>
+                <form id="new-comment-form" action="#">
+                    <div class="form-group">
+                        <textarea id="comment-content" name="content"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">发表</button>
+                </form>
+            </div>
+            <div th:case="true" class="login-required-message">
+                <a th:href="@{/login(return=${#request.getRequestURI()}+'#new-comment-form')}">登录</a>后才能发表评论
+            </div>
+        </th:block>
     </div>
 </div>
 <div th:replace="common::footer">
 </div>
 <script src="https://cdn.jsdelivr.net/npm/ckeditor@4.12.1/ckeditor.js"></script>
-<script>
+<script th:inline="javascript">
+    var topicId = [[${topic.topicId}]];
     CKEDITOR.config.language = "zh-cn";
-    CKEDITOR.replace("content");
+    CKEDITOR.replace("comment-content");
     $("#new-comment-form").bind("submit", function (event) {
         event.preventDefault();
+        try_submit();
     });
+
+    function try_submit() {
+        $.ajax({
+            url: "/api/comment",
+            method: "POST",
+            dataType: "json",
+            data: {
+                "topicId": topicId,
+                "content": CKEDITOR.instances['comment-content'].getData()
+            },
+            success: function (resp) {
+                CKEDITOR.instances['comment-content'].setData("");
+                $("#comment-content").val("");
+                window.location.reload();
+            }
+        });
+    }
 </script>
 </body>
 </html>
