@@ -1,5 +1,6 @@
 package org.dev9.topaz.common.entity;
 
+import jnr.ffi.annotations.In;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Options;
 import org.springframework.core.annotation.Order;
@@ -39,6 +40,9 @@ public class Topic {
     private List<Comment> comments = new ArrayList<>();
 
     public Topic() {
+        this.postTime = Instant.now();
+        this.favoriteCount = 0;
+        this.visitedCount = 0;
     }
 
     public Topic(String title, String content, Instant postTime, User poster, Integer favoriteCount, Integer visitedCount) {

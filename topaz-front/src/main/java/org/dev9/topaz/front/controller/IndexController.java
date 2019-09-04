@@ -65,7 +65,7 @@ public class IndexController {
                         @RequestParam(defaultValue = "20") Integer limit,
                         Map<String, Object> map) {
 
-        Page<Topic> topics = topicRepository.findAll(PageRequest.of(page - 1, limit, Sort.by("postTime")));
+        Page<Topic> topics = topicRepository.findAll(PageRequest.of(page - 1, limit, Sort.by("postTime").descending()));
         map.put("topics", topics.getContent());
         map.put("page", page);
         map.put("limit", limit);

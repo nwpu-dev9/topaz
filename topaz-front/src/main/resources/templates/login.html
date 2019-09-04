@@ -12,7 +12,7 @@
 <div class="container">
     <div class="content">
         <div class="login-form-container">
-            <form action="#" onsubmit="try_login()">
+            <form id="login-form" action="#" onsubmit="try_login()">
                 <a href="/">
                     <img src="/image/hack.png">
                 </a>
@@ -37,6 +37,9 @@
 </div>
 <div th:replace="common::footer">
 </div>
+<script th:inline="javascript">
+    var return_url = [[${return}]];
+</script>
 <script src="/js/login.js"></script>
 </body>
 </html>

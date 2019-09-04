@@ -38,9 +38,26 @@
                 <div class="comment-content" th:text="${comment.content}"></div>
             </div>
         </div>
+        <div class="new-comment-container">
+            <h2>发表新评论</h2>
+            <form id="new-comment-form" action="#">
+                <div class="form-group">
+                    <textarea id="comment-content" name="content"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">发表</button>
+            </form>
+        </div>
     </div>
 </div>
 <div th:replace="common::footer">
 </div>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor@4.12.1/ckeditor.js"></script>
+<script>
+    CKEDITOR.config.language = "zh-cn";
+    CKEDITOR.replace("content");
+    $("#new-comment-form").bind("submit", function (event) {
+        event.preventDefault();
+    });
+</script>
 </body>
 </html>

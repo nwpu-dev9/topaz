@@ -26,11 +26,13 @@ public class Comment {
 
 
     public Comment() {
+        this.commentTime = Instant.now();
+        this.topic = null;
     }
 
     public Comment(String content, Instant commentTime, User commenter, Topic topic) {
         this.content = content;
-        this.commentTime = commentTime;
+        this.commentTime = commentTime == null ? Instant.now() : commentTime;
         this.commenter = commenter;
         this.topic = topic;
     }
