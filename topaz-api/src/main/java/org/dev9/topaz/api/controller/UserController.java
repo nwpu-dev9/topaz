@@ -110,7 +110,7 @@ public class UserController {
         if (null != userRepository.findByName(name))
             throw new ApiNotFoundException("user name exists");
 
-        if (null != userRepository.findByPhoneNumber(name))
+        if (null != userRepository.findByPhoneNumber(phoneNumber))
             throw new ApiNotFoundException("phone number exists");
 
         User user=new User(name, phoneNumber, password, Instant.now(), false);
