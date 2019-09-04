@@ -47,7 +47,7 @@
     CKEDITOR.config.removePlugins = 'elementspath';
     CKEDITOR.replace("content");
     if (method == "PUT") {
-        CKEDITOR.instances.content = content;
+        CKEDITOR.instances.content.setData(content);
         $("#title").val(title);
     }
     $(".form").bind("submit", function (event) {

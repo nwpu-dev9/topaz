@@ -50,3 +50,13 @@
     text-align: center;
     padding: 1rem;
 }
+
+.topic-actions {
+    display: flex;
+    flex-direction: row;
+}
+
+.topic-actions a {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}

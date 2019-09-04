@@ -1,7 +1,9 @@
 package org.dev9.topaz.front.controller;
 
 import org.dev9.topaz.common.dao.repository.TopicRepository;
+import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Topic;
+import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.exception.PageNotFoundException;
 import org.dev9.topaz.common.exception.UnauthorizedException;
 import org.springframework.stereotype.Controller;
@@ -23,15 +25,23 @@ import java.util.Optional;
 public class TopicController {
     @Resource
     private TopicRepository topicRepository;
+    @Resource
+    private UserRepository userRepository;
 
     @GetMapping(value = "/topic/{topicId}")
-    public ModelAndView getTopic(@PathVariable Integer topicId) {
+    public ModelAndView getTopic(@PathVariable Integer topicId, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        User user = userId != null ? userRepository.findById(userId).orElse(null) : null;
         HashMap<String, Object> params = new HashMap<>();
         Optional<Topic> topic = topicRepository.findById(topicId);
         if (!topic.isPresent()) {
             throw new PageNotFoundException();
         }
         params.put("topic", topic.get());
+        params.put("user", user);
+        if (user != null) {
+            params.put("inFavorites", user.getFavoriteTopics().indexOf(topic.get()) < 0);
+        }
         return new ModelAndView("topic", params);
     }
 
