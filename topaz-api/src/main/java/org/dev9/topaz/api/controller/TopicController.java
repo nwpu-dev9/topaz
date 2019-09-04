@@ -6,6 +6,7 @@ import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
 import org.dev9.topaz.api.service.TopicService;
+import org.dev9.topaz.common.TopazCommonApplication;
 import org.dev9.topaz.common.annotation.Permission;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
 
@@ -67,6 +69,42 @@ public class TopicController {
             throw new ApiNotFoundException("no such poster");
 
         Topic savedTopic=topicService.saveTopic(topic) ;
+        RESTfulResponse<Integer> response=RESTfulResponse.ok();
+
+        response.setData(savedTopic.getTopicId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping(path = "/topic/{id}")
+    @ResponseBody
+    @Permission(PermissionType.USER)
+    public ResponseEntity<RESTfulResponse> addTopic(@PathVariable("id") Integer topicId,
+                                                    @RequestParam(required = false) String title,
+                                                    @RequestParam(required = false) String content,
+                                                    HttpSession session
+    ) throws ApiNotFoundException {
+        Integer posterId=(Integer) session.getAttribute("userId");
+        Topic topic=topicRepository.findById(topicId).orElse(null);
+
+        if (null == topic)
+            throw new ApiNotFoundException("no such topic");
+
+        if (null == topic.getPoster() || !posterId.equals(topic.getPoster().getUserId()))
+            throw new ApiNotFoundException("no such poster or poster does not correspond");
+
+        if (null != content) {
+            if (StringUtils.isBlank(content))
+                throw new ApiNotFoundException("content can not be empty");
+            topic.setContent(content);
+        }
+
+        if (null != title) {
+            if (StringUtils.isBlank(title))
+                throw new ApiNotFoundException("title can not be empty");
+            topic.setTitle(title);
+        }
+
+        Topic savedTopic=topicService.saveTopic(topic);
         RESTfulResponse<Integer> response=RESTfulResponse.ok();
 
         response.setData(savedTopic.getTopicId());

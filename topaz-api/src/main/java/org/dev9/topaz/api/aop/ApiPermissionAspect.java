@@ -35,7 +35,7 @@ public class ApiPermissionAspect extends AbstractPermissionAspect {
     public void apiPointcut(){}
 
     @Around("authorize(permission) && apiPointcut()")
-    public Object doAround(ProceedingJoinPoint joinPoint, Permission permission) throws ApiUnauthorizedException {
+    public Object doAround(ProceedingJoinPoint joinPoint, Permission permission) throws Throwable {
         ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (null == attributes)
             throw new ApiUnauthorizedException();
@@ -58,12 +58,6 @@ public class ApiPermissionAspect extends AbstractPermissionAspect {
             throw new ApiUnauthorizedException("permission error");
 
         logger.info("PERMISSION PASSED: "+request.getRequestURL().toString());
-        Object ret= null;
-        try {
-            ret = joinPoint.proceed();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-        return ret;
+        return joinPoint.proceed();
     }
 }
