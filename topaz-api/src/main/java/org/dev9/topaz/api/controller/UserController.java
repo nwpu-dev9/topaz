@@ -55,7 +55,7 @@ public class UserController {
         if (null != phoneNumber)
             user.setPhoneNumber(phoneNumber);
         if (null != name)
-            user.setName(name);
+            user.setName(SensitiveWordUtil.filter(name));
         if (null != profile)
             user.setProfile(SensitiveWordUtil.filter(profile));
         if (null != password)

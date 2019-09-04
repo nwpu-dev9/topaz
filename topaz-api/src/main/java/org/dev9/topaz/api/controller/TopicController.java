@@ -56,7 +56,7 @@ public class TopicController {
             throw new ApiNotFoundException("title can not be empty");
 
         Topic topic = new Topic();
-        topic.setTitle(title);
+        topic.setTitle(SensitiveWordUtil.filter(title));
         topic.setContent(SensitiveWordUtil.filter(content));
         topic.setFavoriteCount(0);
         topic.setPostTime(Instant.now());
@@ -78,10 +78,10 @@ public class TopicController {
     @PutMapping(path = "/topic/{id}")
     @ResponseBody
     @Permission(PermissionType.USER)
-    public ResponseEntity<RESTfulResponse> addTopic(@PathVariable("id") Integer topicId,
-                                                    @RequestParam(required = false) String title,
-                                                    @RequestParam(required = false) String content,
-                                                    HttpSession session
+    public ResponseEntity<RESTfulResponse> updateTopic(@PathVariable("id") Integer topicId,
+                                                       @RequestParam(required = false) String title,
+                                                       @RequestParam(required = false) String content,
+                                                       HttpSession session
     ) throws ApiNotFoundException {
         Integer posterId=(Integer) session.getAttribute("userId");
         Topic topic=topicRepository.findById(topicId).orElse(null);
@@ -95,13 +95,13 @@ public class TopicController {
         if (null != content) {
             if (StringUtils.isBlank(content))
                 throw new ApiNotFoundException("content can not be empty");
-            topic.setContent(content);
+            topic.setContent(SensitiveWordUtil.filter(content));
         }
 
         if (null != title) {
             if (StringUtils.isBlank(title))
                 throw new ApiNotFoundException("title can not be empty");
-            topic.setTitle(title);
+            topic.setTitle(SensitiveWordUtil.filter(title));
         }
 
         Topic savedTopic=topicService.saveTopic(topic);
