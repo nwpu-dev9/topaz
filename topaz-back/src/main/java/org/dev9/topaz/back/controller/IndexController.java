@@ -1,6 +1,5 @@
 package org.dev9.topaz.back.controller;
 
-import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.common.dao.repository.CommentRepository;
 import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
