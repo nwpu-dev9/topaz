@@ -11,5 +11,6 @@ import java.util.Optional;
 
 public interface MessageRepository extends JpaRepository<Message, Integer>,
         JpaSpecificationExecutorWithProjection<Message>, JpaSpecificationExecutor<Message> {
-    public Optional<List<Message>> findAllByReceiver(User receiver);
+    Optional<List<Message>> findAllByReceiver(User receiver);
+    Optional<List<Message>> findAllBySender(User sender);
 }

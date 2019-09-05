@@ -1,8 +1,11 @@
 package org.dev9.topaz.api.controller;
 
+import jnr.ffi.annotations.In;
 import org.apache.commons.lang3.StringUtils;
 import org.dev9.topaz.api.dao.repository.MessageSearchRepository;
+import org.dev9.topaz.api.exception.ApiForbiddenException;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
+import org.dev9.topaz.api.exception.ApiUnauthorizedException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.model.result.MessageSearchResult;
 import org.dev9.topaz.common.annotation.Permission;
@@ -33,6 +36,32 @@ public class MessageController {
 
     @Resource
     private UserRepository userRepository;
+
+    @GetMapping("/message/{id}")
+    @ResponseBody
+    @Permission(PermissionType.USER)
+    public ResponseEntity<RESTfulResponse> getMessage(@PathVariable("id") Integer messageId, HttpSession session){
+        Message message=messageRepository.findById(messageId).orElse(null);
+
+        if (null == message)
+            throw new ApiNotFoundException("no such message");
+
+        Integer userId=(Integer) session.getAttribute("userId");
+        Integer senderId=message.getSender().getUserId();
+        Integer receiverId=message.getReceiver().getUserId();
+        User user=userRepository.findById(userId).orElse(null);
+
+        if (null == user)
+            throw new ApiNotFoundException("no such user");
+
+        if (!userId.equals(senderId) && !userId.equals(receiverId) && !user.isAdmin())
+            throw new ApiUnauthorizedException("you can not get this message");
+
+
+        RESTfulResponse<Message> response=RESTfulResponse.ok();
+        response.setData(message);
+        return ResponseEntity.ok(response);
+    }
 
     @DeleteMapping("/message/{id}")
     @ResponseBody
@@ -74,15 +103,17 @@ public class MessageController {
     @GetMapping("/user/message")
     @ResponseBody
     @Permission(PermissionType.USER)
-    public ResponseEntity<RESTfulResponse> getUserMessages(HttpSession session){
+    public ResponseEntity<RESTfulResponse> getUserMessages(Boolean receiver, HttpSession session){
         Integer userId=(Integer) session.getAttribute("userId");
 
         User user=userRepository.findById(userId).orElse(null);
         List<MessageSearchResult> messages=messageSearchRepository.findAllByReceiver(user);
-
+        messages.addAll(messageSearchRepository.findAllBySender(user));
 
         RESTfulResponse<List<MessageSearchResult>> response=RESTfulResponse.ok();
         response.setData(messages);
         return ResponseEntity.ok(response);
     }
+
+
 }

@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface MessageSearchRepository extends JpaRepository<Message, Integer>,
         JpaSpecificationExecutorWithProjection<Message>, JpaSpecificationExecutor<Message> {
     List<MessageSearchResult> findAllByReceiver(User receiver);
+    List<MessageSearchResult> findAllBySender(User sender);
 }
