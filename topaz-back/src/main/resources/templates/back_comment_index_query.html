@@ -10,6 +10,7 @@
     <!-- Bootstrap core CSS-->
     <div th:replace="back_common::dependency"></div>
     <script>
+
         function delete_id(id) {
             $.ajax({
                 url: "/api/admin/comment/"+id,
@@ -38,10 +39,10 @@
         <!-- Example DataTables Card-->
         <div class="card mb-3">
             <div class="card-header">
-                <i class="fa fa-table"></i> 回复列表</div>
+                <i class="fa fa-table"></i>回复列表</div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered" width="100%" cellspacing="0" id="comment-list">
                         <thead>
                         <tr>
                             <th>回复ID</th>
@@ -51,28 +52,8 @@
                             <th>回复内容</th>
                             <th>删除</th>
                         </tr>
-                        <tfoot>
-                        <nav id="post-nav">
-                                <span class="prev">
-                                    <a th:href="@{/admin/comment/(page=${page -1}, limit=${limit})}" th:if="${page}>0">
-                                       <span class="button">上一页</span>
-                                    </a>
-                                 </span>
-                            <span class="next">
-                                <a th:href="@{/admin/comment/(page=${page +1}, limit=${limit})}" th:if="${page} < ${pageCount -1}">
-                                    <span class="button">下一页</span>
-                                </a>
-                                </span>
-                        </nav>
-                        </tfoot>
-                        <tr th:each="comment:${comments}" th:id="'list' + ${comment.commentId}">
-                            <td ><a th:text="${comment.commentId}" th:href="|/admin/comment/${comment.commentId}|"></a></td>
-                            <td th:text="${comment.commentTime}"></td>
-                            <td th:text="${comment.topic.title}"></td>
-                            <td th:text="${comment.commenter.name}"></td>
-                            <td> <div class="dropdown-message small" th:text="${comment.content}"></div></td>
-                            <td><button th:onclick="'delete_id('+${comment.commentId}+');'" ><span class="button">删除</span></button></td>
-                        </tr>
+                        </thead>
+
                     </table>
                 </div>
             </div>
@@ -82,9 +63,6 @@
     </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
-<script th:src="@{/js/jquery.min.js}"></script>
-<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <!-- Core plugin JavaScript-->
 <script th:src="@{/js/jquery.easing.min.js}"></script>
 <!-- Page level plugin JavaScript-->
@@ -94,6 +72,45 @@
 <script th:src="@{/js/sb-admin.min.js}"></script>
 <!-- Custom scripts for this page-->
 <script th:src="@{/js/sb-admin-datatables.min.js}"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/handlebars@4.1.2/dist/handlebars.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+<script id="comment-template" type="text/x-handlebars-template">
+    {{#each comments}}
+    <tr id="list{{commentId}}">
+        <td ><a href="/comment/{{commentId}}">{{commentId}}</a></td>
+        <td>{{commentTime}}</td>
+        <td>{{topic.title}}</td>
+        <td>{{commenter.name}}</td>
+        <td> <div class="dropdown-comment small">{{content}}</div></td>
+        <td>
+            <button onclick="delete_id({{commentId}});">
+                <span class="button">删除</span>
+            </button>
+        </td>
+    </tr>
+    {{/each}}
+</script>
+<script th:inline="javascript">
+    var source = document.getElementById("comment-template").innerHTML;
+    var template = Handlebars.compile(source);
+    $.ajax({
+        url: "/api/comment/search",
+        dataType: "json",
+        type: "post",
+        data: {
+            "title": [[${query}]]
+        },
+        success: function (resp) {
+            console.log(resp);
+            resp.data.forEach((element) => {
+                element.commentTime = moment.unix(element.commentTime).format("YYYY-M-D H:mm");
+        });
+            $("#comment-list").append(template({comments: resp.data}));
+        },
+    });
+</script>
 
 </body>
 </html>
