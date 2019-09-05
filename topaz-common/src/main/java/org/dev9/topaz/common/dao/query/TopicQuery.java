@@ -13,6 +13,9 @@ public class TopicQuery extends AbstractQuery<Topic> {
     @QueryWord(column = "content", type = MatchType.LIKE)
     private String contentLike;
 
+    @QueryWord(column = "audited", type = MatchType.EQUAL)
+    private Boolean auditedEqual;
+
     public TopicQuery() { }
 
     public void setTopicIdEqual(Integer topicIdEqual) {
@@ -25,5 +28,9 @@ public class TopicQuery extends AbstractQuery<Topic> {
 
     public void setContentLike(String contentLike) {
         this.contentLike = contentLike;
+    }
+
+    public void setAuditedEqual(Boolean auditedEqual) {
+        this.auditedEqual = auditedEqual;
     }
 }

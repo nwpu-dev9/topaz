@@ -24,17 +24,20 @@ public class Comment {
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
+    @Column(name = "is_audited", columnDefinition = "boolean", nullable = false)
+    private Boolean audited;
 
     public Comment() {
         this.commentTime = Instant.now();
         this.topic = null;
     }
 
-    public Comment(String content, Instant commentTime, User commenter, Topic topic) {
+    public Comment(String content, Instant commentTime, User commenter, Topic topic, Boolean audited) {
         this.content = content;
         this.commentTime = commentTime == null ? Instant.now() : commentTime;
         this.commenter = commenter;
         this.topic = topic;
+        this.audited=audited;
     }
 
     @Override
@@ -46,6 +49,14 @@ public class Comment {
                 ", commenter=" + commenter.getUserId() +
                 ", topic=" + topic.getTopicId() +
                 '}';
+    }
+
+    public Boolean getAudited() {
+        return audited;
+    }
+
+    public void setAudited(Boolean audited) {
+        this.audited = audited;
     }
 
     public Integer getCommentId() {

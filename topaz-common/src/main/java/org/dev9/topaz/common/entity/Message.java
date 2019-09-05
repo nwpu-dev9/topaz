@@ -1,5 +1,7 @@
 package org.dev9.topaz.common.entity;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import javax.persistence.*;
 import java.time.Instant;
 
@@ -27,15 +29,27 @@ public class Message {
     @JoinColumn(name = "receiver_uid", nullable = false)
     private User receiver;
 
+    @Column(name = "is_audited", columnDefinition = "boolean", nullable = false)
+    private Boolean audited;
+
     public Message() {
     }
 
-    public Message(String content, Instant sentTime, Boolean isLooked, User sender, User receiver) {
+    public Message(String content, Instant sentTime, Boolean isLooked, User sender, User receiver, Boolean audited) {
         this.content = content;
         this.sentTime = sentTime;
         this.isLooked = isLooked;
         this.sender = sender;
         this.receiver = receiver;
+        this.audited=audited;
+    }
+
+    public Boolean getAudited() {
+        return audited;
+    }
+
+    public void setAudited(Boolean audited) {
+        this.audited = audited;
     }
 
     public Integer getMessageId() {

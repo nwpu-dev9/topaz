@@ -62,6 +62,7 @@ public class TopicController {
         topic.setPostTime(Instant.now());
         topic.setVisitedCount(0);
         topic.setPoster(userRepository.findById(posterId).orElse(null));
+        topic.setAudited(false);
 
         logger.info(topic.toString());
 
@@ -104,6 +105,7 @@ public class TopicController {
             topic.setTitle(SensitiveWordUtil.filter(title));
         }
 
+        topic.setAudited(false);
         Topic savedTopic=topicService.saveTopic(topic);
         RESTfulResponse<Integer> response=RESTfulResponse.ok();
 

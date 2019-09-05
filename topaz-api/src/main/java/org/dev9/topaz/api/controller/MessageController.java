@@ -66,7 +66,7 @@ public class MessageController {
             throw new ApiNotFoundException("no such receiver or sender");
 
         content=SensitiveWordUtil.filter(content);
-        Message message=new Message(content, Instant.now(), false, sender, receiver);
+        Message message=new Message(content, Instant.now(), false, sender, receiver, false);
         messageRepository.save(message);
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
