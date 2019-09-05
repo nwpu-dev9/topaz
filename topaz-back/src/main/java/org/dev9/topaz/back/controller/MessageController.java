@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,28 +28,27 @@ public class MessageController {
     private MessageRepository messageRepository;
 
     @GetMapping({"", "/"})
-    public String topicIndex(@RequestParam(defaultValue = "0") Integer page,
-                             @RequestParam(defaultValue = "20") Integer limit,
+    public String messageIndex(@RequestParam(defaultValue = "0") Integer page,
+                               @RequestParam(defaultValue = "20") Integer limit,
+                               @RequestParam(required = false) String query,
+                               HttpSession session,
                              Map<String, Object> map){
-        Page<Message> messagePage=messageRepository.findAll(PageRequest.of(page, limit, Sort.by("sentTime")));
+        if (null == session.getAttribute("userId"))
+            return  "back_login";
 
-        map.put("messages",messagePage.getContent());
-        map.put("page", page);
-        map.put("limit", limit);
-        map.put("pageCount", messagePage.getTotalPages());
+        if (null != query){
+            map.put("query", query);
+            return "back_message_index_query";
+        } else {
+            Page<Message> messagePage = messageRepository.findAll(PageRequest.of(page, limit, Sort.by("sentTime")));
+            map.put("messages", messagePage.getContent());
+            map.put("pageCount", messagePage.getTotalPages());
+            map.put("page", page);
+            map.put("limit", limit);
 
-        return "back_message_index";
-    }
-
-
-    @GetMapping(value = "{messageId}")
-    public ModelAndView getMessage(@PathVariable Integer messageId) {
-        HashMap<String, Object> params = new HashMap<>();
-        Optional<Message> message = messageRepository.findById(messageId);
-        if (!message.isPresent()) {
-            throw new PageNotFoundException();
+            return "back_message_index";
         }
-        params.put("message", message.get());
-        return new ModelAndView("back_message", params);
+
     }
+
 }
