@@ -67,18 +67,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
     }
 
-    @PostMapping(value = "/user/{id}/favorite")
+    @PostMapping(value = "/user/favorite")
     @ResponseBody
     @Permission(PermissionType.USER)
-    public ResponseEntity<RESTfulResponse> addFavoriteTopic(@PathVariable("id") Integer id,
+    public ResponseEntity<RESTfulResponse> addFavoriteTopic(// @PathVariable("id") Integer id,
                                                             @RequestParam Integer topicId,
                                                             HttpSession session) throws ApiNotFoundException, ApiUnauthorizedException {
-        User user = userRepository.findById(id).orElse(null);
-        Topic topic = topicRepository.findById(topicId).orElse(null);
         Integer sessionUserId=(Integer)session.getAttribute("userId");
-
-        if (!sessionUserId.equals(id))
-            throw new ApiUnauthorizedException();
+        Topic topic = topicRepository.findById(topicId).orElse(null);
+        User user = userRepository.findById(sessionUserId).orElse(null);
 
         if (user == null)
             throw new ApiNotFoundException("no such user");
@@ -88,6 +85,25 @@ public class UserController {
 
         userService.addFavoriteTopic(user, topic);
         return ResponseEntity.status(HttpStatus.CREATED).body(RESTfulResponse.ok());
+    }
+
+    @DeleteMapping("/user/favorite/{tid}")
+    @ResponseBody
+    public ResponseEntity<RESTfulResponse> deleteFavoriateTopic(// @PathVariable("uid") Integer userId,
+                                                                @PathVariable("tid") Integer topicId,
+                                                                HttpSession session){
+        Integer sessionUserId=(Integer)session.getAttribute("userId");
+        User user=userRepository.findById(sessionUserId).orElse(null);
+        Topic topic=topicRepository.findById(topicId).orElse(null);
+
+        if (user == null)
+            throw new ApiNotFoundException("no such user");
+
+        if (topic == null)
+            throw new ApiNotFoundException("no such topic");
+
+        userService.deleteFavoriteTopic(user, topic);
+        return ResponseEntity.ok(RESTfulResponse.ok());
     }
 
     @PostMapping("/user")

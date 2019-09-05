@@ -24,4 +24,11 @@ public class UserServiceImpl implements UserService {
         user.getFavoriteTopics().add(topic);
         userRepository.save(user);
     }
+
+    @Override
+    public void deleteFavoriteTopic(User user, Topic topic) {
+        user.getFavoriteTopics().remove(topic);
+        userRepository.save(user);
+        userRepository.flush();
+    }
 }
