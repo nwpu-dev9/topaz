@@ -6,6 +6,7 @@ import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
 import org.dev9.topaz.common.annotation.Permission;
+import org.dev9.topaz.common.dao.repository.CommentRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
@@ -30,6 +31,9 @@ public class CommentController {
 
     @Resource(name = "ApiCommentService")
     private CommentService commentService;
+
+    @Resource
+    private CommentRepository commentRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -74,6 +78,21 @@ public class CommentController {
     @Permission(PermissionType.ADMIN)
     public ResponseEntity<RESTfulResponse> deleteComment(@PathVariable("id") Integer commentId){
         commentService.deleteComment(commentId);
+        return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    @PostMapping("/admin/comment/{id}/audited")
+    @ResponseBody
+    @Permission(PermissionType.ADMIN)
+    public ResponseEntity<RESTfulResponse> changeCommentAuditedState(@PathVariable("id") Integer commentId,
+                                                                   @RequestParam Boolean audited){
+        Comment comment=commentRepository.findById(commentId).orElse(null);
+
+        if (null == comment)
+            throw new ApiNotFoundException("no such comment");
+
+        comment.setAudited(audited);
+        commentRepository.save(comment);
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }
