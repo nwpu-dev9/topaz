@@ -14,12 +14,23 @@
     <div class="content">
         <div class="topic-container">
             <div class="topic-title" th:text="${topic.title}"></div>
-            <div class="topic-secondary">
-                <a class="topic-poster" th:text="${topic.poster.name}" th:href="|/user/${topic.poster.userId}|"></a>
-                <span class="topic-timestamp" th:text="${formatter.format(topic.postTime)}"></span>
-                <a th:href="@{/topic/edit(topicId=${topic.topicId})}" th:if="${topic.poster.userId.equals(session.userId)}">
-                    编辑
-                </a>
+            <div class="topic-secondary d-flex flex-row">
+                <div class="mr-auto">
+                    <a class="topic-poster" th:text="${topic.poster.name}" th:href="|/user/${topic.poster.userId}|"></a>
+                    <span class="topic-timestamp" th:text="${formatter.format(topic.postTime)}"></span>
+                    <a th:href="@{/topic/edit(topicId=${topic.topicId})}"
+                       th:if="${topic.poster.userId.equals(session.userId)}">
+                        编辑
+                    </a>
+                </div>
+                <div class="topic-actions">
+                    <a href="javascript:void(0);" class="favorite-link off" onclick="toggle_favorite()">
+                        <i class="far fa-heart"></i>收藏
+                    </a>
+                    <a href="javascript:void(0);" class="upvote-link off">
+                        <i class="far fa-thumbs-up"></i>赞
+                    </a>
+                </div>
             </div>
             <div class="topic-content" th:utext="${topic.content}"></div>
         </div>

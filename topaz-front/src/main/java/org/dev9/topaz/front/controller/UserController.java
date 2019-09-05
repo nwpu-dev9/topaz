@@ -48,7 +48,7 @@ public class UserController {
             messages = Collections.emptyList();
         }
         params.put("messages", messages);
-        return new ModelAndView("user", params);
+        return new ModelAndView("message", params);
     }
 
     @GetMapping("/register")
