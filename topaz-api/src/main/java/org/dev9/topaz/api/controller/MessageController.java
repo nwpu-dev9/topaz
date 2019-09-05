@@ -1,8 +1,10 @@
 package org.dev9.topaz.api.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dev9.topaz.api.dao.repository.MessageSearchRepository;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
+import org.dev9.topaz.api.model.result.MessageSearchResult;
 import org.dev9.topaz.common.annotation.Permission;
 import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
+import java.util.List;
 
 @Controller("ApiMessageController")
 @RequestMapping("/api")
@@ -24,6 +27,9 @@ public class MessageController {
 
     @Resource
     private MessageRepository messageRepository;
+
+    @Resource
+    private MessageSearchRepository messageSearchRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -63,5 +69,20 @@ public class MessageController {
         Message message=new Message(content, Instant.now(), false, sender, receiver);
         messageRepository.save(message);
         return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    @GetMapping("/user/message")
+    @ResponseBody
+    @Permission(PermissionType.USER)
+    public ResponseEntity<RESTfulResponse> getUserMessages(HttpSession session){
+        Integer userId=(Integer) session.getAttribute("userId");
+
+        User user=userRepository.findById(userId).orElse(null);
+        List<MessageSearchResult> messages=messageSearchRepository.findAllByReceiver(user);
+
+
+        RESTfulResponse<List<MessageSearchResult>> response=RESTfulResponse.ok();
+        response.setData(messages);
+        return ResponseEntity.ok(response);
     }
 }

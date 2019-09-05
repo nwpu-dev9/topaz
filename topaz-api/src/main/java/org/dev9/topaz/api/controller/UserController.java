@@ -89,7 +89,7 @@ public class UserController {
 
     @DeleteMapping("/user/favorite/{tid}")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> deleteFavoriateTopic(// @PathVariable("uid") Integer userId,
+    public ResponseEntity<RESTfulResponse> deleteFavoriteTopic(// @PathVariable("uid") Integer userId,
                                                                 @PathVariable("tid") Integer topicId,
                                                                 HttpSession session){
         Integer sessionUserId=(Integer)session.getAttribute("userId");
