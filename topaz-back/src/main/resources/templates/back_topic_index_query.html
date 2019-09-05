@@ -48,6 +48,7 @@
                             <th>话题发表时间</th>
                             <th>话题标题</th>
                             <th>发帖人账号</th>
+                            <th>是否审核</th>
                             <th>删除</th>
                         </tr>
                         </thead>
@@ -81,9 +82,10 @@
         <td>{{postTime}}</td>
         <td>{{title}}</td>
         <td><a href="/user/{{poster.userId}}">{{poster.name}}</a></td>
+        <td>{{audited}}</td>
         <td>
-            <button onclick="delete_id({{topicId}});">
-                <span class="button">删除</span>
+            <button class="btn-outline-light" onclick="delete_id({{topicId}});" style="background-color: #c82333; width: 70px; height: 30px">
+                <span class="text-lg-center">×</span>
             </button>
         </td>
     </tr>

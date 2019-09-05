@@ -67,12 +67,12 @@
                         </tfoot>
 
                         <div id="topic-list">
-                            <tr th:each="topic:${topics}" th:id="'list' + ${topic.topicId}">
-                                <td><a th:text="${topic.topicId}" th:href="|/admin/topic/${topic.topicId}|"></a></td>
+                            <tr th:each="topic:${topics}" th:id="'list' + ${topic.topicId}" >
+                                <td><a th:text="${topic.topicId}" th:href="|/topic/${topic.topicId}|"></a></td>
                                 <td th:text="${topic.postTime}"></td>
                                 <td th:text="${topic.title}"></td>
                                 <td th:text="${topic.comments.size()}"></td>
-                                <td><button th:onclick="'delete_id('+${topic.topicId}+');'" ><span class="button">删除</span></button></td>
+                                <td><button class="btn-outline-light" th:onclick="'delete_id('+${topic.topicId}+');'" style="background-color: #c82333; width: 70px; height: 30px"><span class="text-lg-center">×</span></button></td>
                             </tr>
                         </div>
 

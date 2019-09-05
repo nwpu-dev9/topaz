@@ -30,16 +30,11 @@ public class MessageController {
     @GetMapping({"", "/"})
     public String messageIndex(@RequestParam(defaultValue = "0") Integer page,
                                @RequestParam(defaultValue = "20") Integer limit,
-                               @RequestParam(required = false) String query,
                                HttpSession session,
                              Map<String, Object> map){
         if (null == session.getAttribute("userId"))
             return  "back_login";
 
-        if (null != query){
-            map.put("query", query);
-            return "back_message_index_query";
-        } else {
             Page<Message> messagePage = messageRepository.findAll(PageRequest.of(page, limit, Sort.by("sentTime")));
             map.put("messages", messagePage.getContent());
             map.put("pageCount", messagePage.getTotalPages());
@@ -47,7 +42,6 @@ public class MessageController {
             map.put("limit", limit);
 
             return "back_message_index";
-        }
 
     }
 

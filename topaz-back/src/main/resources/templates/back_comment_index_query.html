@@ -50,6 +50,7 @@
                             <th>回复话题</th>
                             <th>回复者</th>
                             <th>回复内容</th>
+                            <th>是否审核</th>
                             <th>删除</th>
                         </tr>
                         </thead>
@@ -84,9 +85,10 @@
         <td>{{topic.title}}</td>
         <td>{{commenter.name}}</td>
         <td> <div class="dropdown-comment small">{{content}}</div></td>
+        <td>{{audited}}</td>
         <td>
-            <button onclick="delete_id({{commentId}});">
-                <span class="button">删除</span>
+            <button class="btn-outline-light" onclick="delete_id({{topicId}});" style="background-color: #c82333; width: 70px; height: 30px">
+                <span class="text-lg-center">×</span>
             </button>
         </td>
     </tr>

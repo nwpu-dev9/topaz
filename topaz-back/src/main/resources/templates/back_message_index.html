@@ -12,7 +12,7 @@
     <script>
         function delete_id(id) {
             $.ajax({
-                url: "/api/admin/message/"+id,
+                url: "/api/message/"+id,
                 type: "delete",
                 success: function (msg) {
                     $("#list"+id).remove();
@@ -43,7 +43,6 @@
                             <th>发送者</th>
                             <th>接收者</th>
                             <th>回复内容</th>
-                            <th>是否阅读</th>
                             <th>删除</th>
                         </tr>
                         <tfoot>
@@ -61,12 +60,12 @@
                         </nav>
                         </tfoot>
                         <tr th:each="message:${messages}" th:id="'list' + ${message.messageId}">
-                            <td ><a th:text="${message.messageId}" th:href="|/admin/message/${message.messageId}|"></a></td>
+                            <td ><a th:text="${message.messageId}" th:href="|/message/${message.messageId}|"></a></td>
                             <td th:text="${message.sentTime}"></td>
                             <td th:text="${message.sender.name}"></td>
                             <td th:text="${message.receiver.name}"></td>
                             <td> <div class="dropdown-message small" th:text="${message.content}"></div></td>
-                            <td><button th:onclick="'delete_id('+${message.messageId}+');'" ><span class="button">删除</span></button></td>
+                            <td><button class="btn-outline-light" th:onclick="'delete_id('+${message.messageId}+');'" style="background-color: #c82333; width: 70px; height: 30px"><span class="text-lg-center">×</span></button></td>
                         </tr>
                     </table>
                 </div>
