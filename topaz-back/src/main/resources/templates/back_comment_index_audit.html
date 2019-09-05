@@ -10,7 +10,20 @@
     <!-- Bootstrap core CSS-->
     <div th:replace="back_common::dependency"></div>
     <script>
-        function delete_id(id) {
+        function check_success(id) {
+            $.ajax({
+                url: "/api/admin/comment/"+ id +"/audited",
+                type:"post",
+                data:{
+                    "audited" : true
+                },
+                success: function (msg) {
+                    $("#list"+id).remove();
+                }
+            })
+        }
+
+        function check_fail(id) {
             $.ajax({
                 url: "/api/admin/comment/"+id,
                 type: "delete",
@@ -49,17 +62,17 @@
                             <th>回复话题</th>
                             <th>回复者</th>
                             <th>回复内容</th>
-                            <th>删除</th>
+                            <th>通过/驳回</th>
                         </tr>
                         <tfoot>
                         <nav id="post-nav">
                                 <span class="prev">
-                                    <a th:href="@{/admin/comment/(page=${page -1}, limit=${limit})}" th:if="${page}>0">
+                                    <a th:href="@{/admin/comment/audit/(page=${page -1}, limit=${limit})}" th:if="${page}>0">
                                        <span class="button">上一页</span>
                                     </a>
                                  </span>
                             <span class="next">
-                                <a th:href="@{/admin/comment/(page=${page +1}, limit=${limit})}" th:if="${page} < ${pageCount -1}">
+                                <a th:href="@{/admin/comment/audit/(page=${page +1}, limit=${limit})}" th:if="${page} < ${pageCount -1}">
                                     <span class="button">下一页</span>
                                 </a>
                                 </span>
@@ -71,7 +84,10 @@
                             <td th:text="${comment.topic.title}"></td>
                             <td th:text="${comment.commenter.name}"></td>
                             <td> <div class="dropdown-message small" th:text="${comment.content}"></div></td>
-                            <td><button class="btn-outline-light" th:onclick="'delete_id('+${comment.commentId}+');'" style="background-color: #c82333; width: 70px; height: 30px"><span class="text-lg-center">×</span></button></td>
+                            <td>
+                                <button class="btn-outline-light" th:onclick="'check_success('+${comment.commentId}+');'" style="background-color: #28a745; width: 70px; height: 30px" ><span class="text-lg-center">√</span></button>
+                                <button class="btn-outline-light" th:onclick="'check_fail('+${comment.commentId}+');'" style="background-color: #c82333; width: 70px; height: 30px"><span class="text-lg-center">×</span></button>
+                            </td>
                         </tr>
                     </table>
                 </div>
