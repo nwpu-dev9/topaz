@@ -3,7 +3,9 @@ package org.dev9.topaz.api.controller;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.ImageService;
+import org.dev9.topaz.common.configuration.WebConfig;
 import org.dev9.topaz.common.util.FileUtil;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,10 +30,17 @@ public class ImageController {
     @Resource
     private ImageService imageService;
 
+    private final RabbitTemplate rabbitTemplate;
+
+    public ImageController(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
     @PostMapping("/image")
     @ResponseBody
     public ResponseEntity<RESTfulResponse> imageUpload(@RequestParam MultipartFile image) throws ApiNotFoundException {
         String filename=imageService.saveImage(image);
+        rabbitTemplate.convertAndSend("topaz.exchange", "topaz.route", filename);
 
         RESTfulResponse<String> response=RESTfulResponse.ok();
         response.setData(filename);
