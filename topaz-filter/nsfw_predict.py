@@ -63,6 +63,7 @@ def predict(image_path):
 
 def callback(ch, method, properties, body):
     body=body.decode()
+    print("come", body)
     try:
         res=predict(config["prefix"]+body)
     except:
@@ -77,7 +78,7 @@ def callback(ch, method, properties, body):
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
 channel.basic_consume(
-    queue='topaz.queue', on_message_callback=callback, auto_ack=True)
+    queue='topaz.queue'+sys.argv[1], on_message_callback=callback, auto_ack=True)
 
 if not os.path.exists(config['prefix']):
     os.makedirs(config['prefix'])

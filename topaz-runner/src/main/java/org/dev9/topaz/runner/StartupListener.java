@@ -1,5 +1,6 @@
 package org.dev9.topaz.runner;
 
+import org.dev9.topaz.common.configuration.RabbitMqConfig;
 import org.dev9.topaz.common.dao.repository.CommentRepository;
 import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
@@ -9,10 +10,7 @@ import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.util.SensitiveWordUtil;
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
@@ -77,8 +75,12 @@ public class StartupListener {
     }
 
     private void initRabbitMQ(){
-        amqpAdmin.declareExchange(new DirectExchange("topaz.exchange"));
-        amqpAdmin.declareQueue(new Queue("topaz.queue", true));
-        amqpAdmin.declareBinding(new Binding("topaz.queue", Binding.DestinationType.QUEUE, "topaz.exchange", "topaz.route", null));
+        amqpAdmin.declareExchange(new TopicExchange("topaz.exchange"));
+
+        for (int i = 0; i<RabbitMqConfig.TOTAL_COUNT; i++) {
+            amqpAdmin.declareQueue(new Queue("topaz.queue"+i, false));
+            amqpAdmin.declareBinding(new Binding("topaz.queue"+i, Binding.DestinationType.QUEUE,
+                    "topaz.exchange", "topaz.route"+i, null));
+        }
     }
 }
