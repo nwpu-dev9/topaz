@@ -77,6 +77,7 @@ public class SearchController {
             @RequestParam(required = false) Integer topicId,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content,
+            @RequestParam(required = false) Boolean audited,
             @RequestParam(required = false) String logicTypeString,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "20") Integer limit
@@ -88,6 +89,7 @@ public class SearchController {
             setTopicIdEqual(topicId);
             setTitleLike(title);
             setContentLike(content);
+            setAuditedEqual(audited);
         }};
 
         if ("OR".equals(logicTypeString))
@@ -110,6 +112,7 @@ public class SearchController {
     public ResponseEntity<RESTfulResponse<List<CommentSearchResult>>> searchComment(
             @RequestParam(required = false) Integer commentId,
             @RequestParam(required = false) String content,
+            @RequestParam(required = false) Boolean audited,
             @RequestParam(required = false) String logicTypeString,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "20") Integer limit
@@ -120,6 +123,7 @@ public class SearchController {
             setCombineLogicType(LogicType.AND);
             setCommentIdEqual(commentId);
             setContentLike(content);
+            setAuditedEqual(audited);
         }};
 
         if ("OR".equals(logicTypeString))

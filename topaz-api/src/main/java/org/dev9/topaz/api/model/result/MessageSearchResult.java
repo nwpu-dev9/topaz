@@ -9,4 +9,5 @@ public interface MessageSearchResult {
     Boolean getIsLooked();
     UserSearchResult getSender();
     UserSearchResult getReceiver();
+    Boolean getAudited();
 }

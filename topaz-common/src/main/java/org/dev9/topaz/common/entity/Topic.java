@@ -39,19 +39,23 @@ public class Topic {
     @OrderBy("commentTime ASC")
     private List<Comment> comments = new ArrayList<>();
 
+    @Column(name = "is_audited", columnDefinition = "boolean", nullable = false)
+    private Boolean audited;
+
     public Topic() {
         this.postTime = Instant.now();
         this.favoriteCount = 0;
         this.visitedCount = 0;
     }
 
-    public Topic(String title, String content, Instant postTime, User poster, Integer favoriteCount, Integer visitedCount) {
+    public Topic(String title, String content, Instant postTime, User poster, Integer favoriteCount, Integer visitedCount, Boolean audited) {
         this.title = title;
         this.content = content;
         this.postTime = postTime;
         this.poster = poster;
         this.favoriteCount = favoriteCount;
         this.visitedCount = visitedCount;
+        this.audited=audited;
     }
 
     public String getRenderedContent() {
@@ -84,6 +88,14 @@ public class Topic {
                 ", favoriteCount=" + favoriteCount +
                 ", visitedCount=" + visitedCount +
                 '}';
+    }
+
+    public Boolean getAudited() {
+        return audited;
+    }
+
+    public void setAudited(Boolean audited) {
+        this.audited = audited;
     }
 
     public String getTitle() {

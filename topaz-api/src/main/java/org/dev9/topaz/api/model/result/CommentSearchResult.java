@@ -8,4 +8,5 @@ public interface CommentSearchResult {
     Instant getCommentTime();
     UserSearchResult getCommenter();
     TopicSearchResult getTopic();
+    Boolean getAudited();
 }

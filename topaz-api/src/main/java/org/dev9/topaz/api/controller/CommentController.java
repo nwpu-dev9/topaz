@@ -50,6 +50,7 @@ public class CommentController {
         comment.setCommenter(userRepository.findById(commenterId).orElse(null));
         comment.setTopic(topicRepository.findById(topicId).orElse(null));
         comment.setContent(SensitiveWordUtil.filter(content));
+        comment.setAudited(false);
 
         logger.info(comment.toString());
 
