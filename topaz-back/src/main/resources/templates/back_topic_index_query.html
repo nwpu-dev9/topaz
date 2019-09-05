@@ -7,9 +7,9 @@
     <meta name="description" content="">
     <meta name="xwm" content="">
     <title>Topaz - 话题列表</title>
-    <!-- Bootstrap core CSS-->
     <div th:replace="back_common::dependency"></div>
     <script>
+
         function delete_id(id) {
             $.ajax({
                 url: "/api/admin/topic/"+id,
@@ -35,46 +35,22 @@
                 </button>
             </form>
         </ol>
-
         <!-- Example DataTables Card-->
         <div class="card mb-3">
             <div class="card-header">
                 <i class="fa fa-table"></i>话题列表</div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered" width="100%" cellspacing="0" id="topic-list">
                         <thead>
                         <tr>
                             <th>话题ID</th>
                             <th>话题发表时间</th>
                             <th>话题标题</th>
-                            <th>评论数</th>
+                            <th>发帖人账号</th>
                             <th>删除</th>
                         </tr>
-                        <tfoot>
-                            <nav id="post-nav">
-                                <span class="prev">
-                                    <a th:href="@{/admin/topic/(page=${page -1}, limit=${limit})}" th:if="${page}>0">
-                                       <span class="button">上一页</span>
-                                    </a>
-                                 </span>
-                                <span class="next">
-                                <a th:href="@{/admin/topic/(page=${page +1}, limit=${limit})}" th:if="${page} < ${pageCount -1}">
-                                    <span class="button">下一页</span>
-                                </a>
-                                </span>
-                            </nav>
-                        </tfoot>
-
-                        <div id="topic-list">
-                            <tr th:each="topic:${topics}" th:id="'list' + ${topic.topicId}">
-                                <td><a th:text="${topic.topicId}" th:href="|/admin/topic/${topic.topicId}|"></a></td>
-                                <td th:text="${topic.postTime}"></td>
-                                <td th:text="${topic.title}"></td>
-                                <td th:text="${topic.comments.size()}"></td>
-                                <td><button th:onclick="'delete_id('+${topic.topicId}+');'" ><span class="button">删除</span></button></td>
-                            </tr>
-                        </div>
+                        </thead>
 
                     </table>
                 </div>
@@ -84,6 +60,53 @@
         <div th:replace="back_common::logout-part"></div>
     </div>
 </div>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/js/jquery.easing.min.js}"></script>
+<!-- Page level plugin JavaScript-->
+<script th:src="@{/js/jquery.dataTables.js}"></script>
+<script th:src="@{/js/dataTables.bootstrap4.js}"></script>
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin.min.js}"></script>
+<!-- Custom scripts for this page-->
+<script th:src="@{/js/sb-admin-datatables.min.js}"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/handlebars@4.1.2/dist/handlebars.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+<script id="topic-template" type="text/x-handlebars-template">
+    {{#each topics}}
+    <tr id="list{{topicId}}">
+        <td ><a href="/topic/{{topicId}}">{{topicId}}</a></td>
+        <td>{{postTime}}</td>
+        <td>{{title}}</td>
+        <td><a href="/user/{{poster.userId}}">{{poster.name}}</a></td>
+        <td>
+            <button onclick="delete_id({{topicId}});">
+                <span class="button">删除</span>
+            </button>
+        </td>
+    </tr>
+    {{/each}}
+</script>
+<script th:inline="javascript">
+    var source = document.getElementById("topic-template").innerHTML;
+    var template = Handlebars.compile(source);
+    $.ajax({
+        url: "/api/topic/search",
+        dataType: "json",
+        type: "post",
+        data: {
+            "title": [[${query}]]
+        },
+        success: function (resp) {
+            resp.data.forEach((element) => {
+                element.postTime = moment.unix(element.postTime).format("YYYY-M-D H:mm");
+        });
+            $("#topic-list").append(template({topics: resp.data}));
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -25,6 +25,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
+import java.util.List;
 
 @Controller("ApiUserController")
 @RequestMapping("/api")
@@ -104,6 +105,22 @@ public class UserController {
 
         userService.deleteFavoriteTopic(user, topic);
         return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    @GetMapping("/user/favorite")
+    @ResponseBody
+    @Permission(PermissionType.USER)
+    public ResponseEntity<RESTfulResponse> getUserFavorites(HttpSession session){
+        User user=userRepository.findById((Integer) session.getAttribute("userId")).orElse(null);
+
+        if (null == user)
+            throw new ApiNotFoundException("no such user");
+
+        List<Topic> favorites=user.getFavoriteTopics();
+
+        RESTfulResponse<List<Topic>> response=RESTfulResponse.ok();
+        response.setData(favorites);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/user")

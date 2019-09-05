@@ -3,6 +3,7 @@ package org.dev9.topaz.api.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.Response;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
+import org.dev9.topaz.api.exception.ApiUnauthorizedException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.CommentService;
 import org.dev9.topaz.api.service.TopicService;
@@ -62,6 +63,7 @@ public class TopicController {
         topic.setPostTime(Instant.now());
         topic.setVisitedCount(0);
         topic.setPoster(userRepository.findById(posterId).orElse(null));
+        topic.setAudited(false);
 
         logger.info(topic.toString());
 
@@ -104,6 +106,7 @@ public class TopicController {
             topic.setTitle(SensitiveWordUtil.filter(title));
         }
 
+        topic.setAudited(false);
         Topic savedTopic=topicService.saveTopic(topic);
         RESTfulResponse<Integer> response=RESTfulResponse.ok();
 
@@ -116,6 +119,21 @@ public class TopicController {
     @Permission(PermissionType.ADMIN)
     public ResponseEntity <RESTfulResponse> deleteTopic(@PathVariable("id") Integer id){
         topicRepository.deleteById(id);
+        return ResponseEntity.ok(RESTfulResponse.ok());
+    }
+
+    @PostMapping("/admin/topic/{id}/audited")
+    @ResponseBody
+    @Permission(PermissionType.ADMIN)
+    public ResponseEntity<RESTfulResponse> changeTopicAuditedState(@PathVariable("id") Integer topicId,
+                                                                   @RequestParam Boolean audited){
+        Topic topic=topicRepository.findById(topicId).orElse(null);
+
+        if (null == topic)
+            throw new ApiNotFoundException("no such topic");
+
+        topic.setAudited(audited);
+        topicRepository.save(topic);
         return ResponseEntity.ok(RESTfulResponse.ok());
     }
 }

@@ -1,7 +1,11 @@
 package org.dev9.topaz.back.controller;
 
+import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
+import org.dev9.topaz.common.dao.repository.UserRepository;
+import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.Topic;
+import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.exception.PageNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,30 +29,35 @@ import java.util.Optional;
 public class TopicController {
 
     @Resource
+    private UserRepository userRepository;
+
+    @Resource
     private TopicRepository topicRepository;
+
+    @Resource
+    private MessageRepository messageRepository;
 
     @GetMapping({"", "/"})
     public String topicIndex(@RequestParam(defaultValue = "0") Integer page,
                              @RequestParam(defaultValue = "20") Integer limit,
+                             @RequestParam(required = false) String query,
+                             HttpSession session,
                              Map<String, Object> map){
-        Page<Topic> topicPage=topicRepository.findAll(PageRequest.of(page, limit, Sort.by("postTime")));
 
-        map.put("topics",topicPage.getContent());
-        map.put("page", page);
-        map.put("limit", limit);
-        map.put("pageCount", topicPage.getTotalPages());
+        if (null == session.getAttribute("userId"))
+            return  "back_login";
 
-        return "back_topic_index";
-    }
+        if (null != query){
+            map.put("query", query);
+            return "back_topic_index_query";
+        } else {
+            Page<Topic> topicPage = topicRepository.findAll(PageRequest.of(page, limit, Sort.by("postTime")));
+            map.put("topics", topicPage.getContent());
+            map.put("pageCount", topicPage.getTotalPages());
+            map.put("page", page);
+            map.put("limit", limit);
 
-    @GetMapping(value = "{topicId}")
-    public ModelAndView getTopic(@PathVariable Integer topicId) {
-        HashMap<String, Object> params = new HashMap<>();
-        Optional<Topic> topic = topicRepository.findById(topicId);
-        if (!topic.isPresent()) {
-            throw new PageNotFoundException();
+            return "back_topic_index";
         }
-        params.put("topic", topic.get());
-        return new ModelAndView("back_topic", params);
     }
 }

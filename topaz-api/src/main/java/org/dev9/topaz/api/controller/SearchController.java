@@ -3,6 +3,7 @@ package org.dev9.topaz.api.controller;
 import org.dev9.topaz.api.dao.repository.TopicSearchRepository;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
+import org.dev9.topaz.api.model.result.CommentSearchResult;
 import org.dev9.topaz.api.model.result.TopicSearchResult;
 import org.dev9.topaz.common.dao.AbstractQuery;
 import org.dev9.topaz.common.dao.query.CommentQuery;
@@ -76,6 +77,7 @@ public class SearchController {
             @RequestParam(required = false) Integer topicId,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content,
+            @RequestParam(required = false) Boolean audited,
             @RequestParam(required = false) String logicTypeString,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "20") Integer limit
@@ -87,6 +89,7 @@ public class SearchController {
             setTopicIdEqual(topicId);
             setTitleLike(title);
             setContentLike(content);
+            setAuditedEqual(audited);
         }};
 
         if ("OR".equals(logicTypeString))
@@ -106,28 +109,34 @@ public class SearchController {
 
     @PostMapping("/comment/search")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse<List<Comment>>> searchComment(
+    public ResponseEntity<RESTfulResponse<List<CommentSearchResult>>> searchComment(
             @RequestParam(required = false) Integer commentId,
             @RequestParam(required = false) String content,
-            @RequestParam(required = false) String logicTypeString
+            @RequestParam(required = false) Boolean audited,
+            @RequestParam(required = false) String logicTypeString,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer limit
     ) throws ApiNotFoundException {
-        List<Comment> comments;
+        List<CommentSearchResult> comments;
 
         CommentQuery commentQuery=new CommentQuery(){{
             setCombineLogicType(LogicType.AND);
             setCommentIdEqual(commentId);
             setContentLike(content);
+            setAuditedEqual(audited);
         }};
 
         if ("OR".equals(logicTypeString))
             commentQuery.setCombineLogicType(AbstractQuery.LogicType.OR);
 
-        comments=commentRepository.findAll(commentQuery.toSpec(), Sort.by("commentTime"));
+        comments=commentRepository
+                .findAll(commentQuery.toSpec(), CommentSearchResult.class, PageRequest.of(page, limit, Sort.by("commentTime")))
+                .getContent();
 
         if (null == comments)
             throw new ApiNotFoundException("no such comment");
 
-        RESTfulResponse<List<Comment>> response=RESTfulResponse.ok();
+        RESTfulResponse<List<CommentSearchResult>> response=RESTfulResponse.ok();
         response.setData(comments);
         return ResponseEntity.ok(response);
     }

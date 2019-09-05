@@ -10,4 +10,5 @@ public interface TopicSearchResult {
     UserSearchResult getPoster();
     Integer getFavoriteCount();
     Integer getVisitedCount();
+    Boolean getAudited();
 }

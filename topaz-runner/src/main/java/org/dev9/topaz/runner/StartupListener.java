@@ -1,9 +1,11 @@
 package org.dev9.topaz.runner;
 
 import org.dev9.topaz.common.dao.repository.CommentRepository;
+import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
+import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.util.SensitiveWordUtil;
@@ -19,13 +21,15 @@ import java.util.Random;
 
 public class StartupListener {
     public StartupListener(TopicRepository topicRepository, CommentRepository commentRepository, UserRepository userRepository,
-                           AmqpAdmin amqpAdmin) {
+                           MessageRepository messageRepository, AmqpAdmin amqpAdmin) {
         this.topicRepository = topicRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
         this.amqpAdmin=amqpAdmin;
     }
 
+    private MessageRepository messageRepository;
     private TopicRepository topicRepository;
     private CommentRepository commentRepository;
     private UserRepository userRepository;
@@ -50,12 +54,16 @@ public class StartupListener {
                     baseTime,
                     userRepository.findById(random.nextInt(2) + 1).get(),
                     1,
-                    1);
+                    1,
+                    false);
             topicRepository.save(topic);
             for (int j = 0; j < 7 + new Random().nextInt(7); j++) {
-                commentRepository.save(new Comment(String.format("评论内容 %s\n评论内容 %s", j, j), baseTime.plus(Duration.ofHours(j * 2)), userRepository.findById(random.nextInt(2) + 1).get(), topic));
+                commentRepository.save(new Comment(String.format("评论内容 %s\n评论内容 %s", j, j), baseTime.plus(Duration.ofHours(j * 2)), userRepository.findById(random.nextInt(2) + 1).get(), topic, false));
             }
         }
+
+        for (int i = 1; i<=5; i++)
+            messageRepository.save(new Message("test message", Instant.now(), false, user1, user2, false));
     }
 
     private void initUtils(){
