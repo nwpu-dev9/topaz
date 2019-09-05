@@ -1,5 +1,7 @@
 package org.dev9.topaz.back.controller;
 
+import org.dev9.topaz.common.dao.AbstractQuery;
+import org.dev9.topaz.common.dao.query.TopicQuery;
 import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.dao.repository.UserRepository;
@@ -19,10 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.awt.print.Pageable;
+import java.util.*;
 
 @Controller("BackTopicController")
 @RequestMapping("/admin/topic")
@@ -51,13 +51,42 @@ public class TopicController {
             map.put("query", query);
             return "back_topic_index_query";
         } else {
-            Page<Topic> topicPage = topicRepository.findAll(PageRequest.of(page, limit, Sort.by("postTime")));
-            map.put("topics", topicPage.getContent());
-            map.put("pageCount", topicPage.getTotalPages());
+            TopicQuery topicQuery=new TopicQuery(){{
+                setAuditedEqual(true);
+            }};
+            Page<Topic> topics=topicRepository
+                    .findAll(topicQuery.toSpec(), PageRequest.of(page, limit, Sort.by("postTime")));
+
+            map.put("topics", topics.getContent());
+            map.put("pageCount", topics.getTotalPages());
             map.put("page", page);
             map.put("limit", limit);
 
             return "back_topic_index";
         }
+    }
+
+    @GetMapping(path = "/audit")
+    public String topicAudit(@RequestParam(defaultValue = "0") Integer page,
+                             @RequestParam(defaultValue = "20") Integer limit,
+                             @RequestParam(required = false) String query,
+                             HttpSession session,
+                             Map<String, Object> map) {
+
+        if (null == session.getAttribute("userId"))
+            return "back_login";
+
+        TopicQuery topicQuery=new TopicQuery(){{
+            setAuditedEqual(false);
+        }};
+        Page<Topic> topics=topicRepository
+                .findAll(topicQuery.toSpec(), PageRequest.of(page, limit, Sort.by("postTime")));
+
+        map.put("topics", topics.getContent());
+        map.put("pageCount", topics.getTotalPages());
+        map.put("page", page);
+        map.put("limit", limit);
+
+        return "back_topic_index_audit";
     }
 }
