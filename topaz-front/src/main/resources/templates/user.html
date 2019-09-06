@@ -26,9 +26,95 @@
                 <td>[[${user.profile}]]</td>
             </tr>
         </table>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#message-editor-modal"
+                th:classappend="${session.userId==null}?'disabled'"
+                th:if="${session.userId!=null&&session.userId!=user.userId}">
+            发私信
+        </button>
+        <div class="favorite-topics">
+
+        </div>
     </div>
 </div>
 <div th:replace="common::footer">
 </div>
+<div class="modal" id="message-editor-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">发送私信</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="message-editor"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="send_message()">发送</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="topic-template" type="text/x-handlebars-template">
+    {{#each topics}}
+    <div class="favorite-item d-flex flex-row">
+        <div class="item-title mr-auto">
+            <a href="/topic/{{topicId}}">{{title}}</a>
+        </div>
+        <div class="item-info">
+            <a class="topic-poster-name" href="/user/{{poster.userId}}">{{poster.name}}</a>
+            <span>{{postTime}}</span>
+        </div>
+    </div>
+    {{/each}}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@4.1.2/dist/handlebars.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor@4.12.1/ckeditor.js"></script>
+<script th:inline="javascript">
+    CKEDITOR.config.language = "zh-cn";
+    CKEDITOR.config.removePlugins = 'elementspath';
+    CKEDITOR.replace("message-editor");
+
+    function send_message() {
+        $.ajax({
+            url: "/api/user/" + [[${user.userId}]] + "/message",
+            method: "POST",
+            dataType: "json",
+            data: {
+                content: CKEDITOR.instances["message-editor"].getData(),
+            },
+            success: function (resp) {
+                CKEDITOR.instances["message-editor"].setData("");
+                $('#message-editor-modal').modal("hide");
+            },
+            error: function (xhr) {
+                alert(xhr.responseText);
+            }
+        });
+    }
+
+    function show_favorites() {
+        $.ajax({
+            url: "/api/user/favorite",
+            dataType: "json",
+            type: "get",
+            success: function (resp) {
+                console.log(template({topics: resp.data}));
+                resp.data.forEach((element) => {
+                    element.postTime = moment.unix(element.postTime).format("YYYY-M-D H:mm");
+                });
+                $(".favorite-topics").html(template({topics: resp.data}));
+            }
+        });
+    }
+</script>
+<script th:if="${session.userId==user.userId}">
+    $(() => {
+        show_favorites()
+    });
+</script>
 </body>
 </html>

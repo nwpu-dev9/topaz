@@ -41,12 +41,14 @@
         var content = [[${topic.content}]];
     </script>
 </th:block>
-
+<script src="/ckeditor/plugins/uploadimage/plugin.js"></script>
 <script th:inline="javascript">
     CKEDITOR.config.language = "zh-cn";
+    CKEDITOR.config.extraPlugins = 'uploadimage';
+    CKEDITOR.config.imageUploadUrl = '/api/image';
     CKEDITOR.config.removePlugins = 'elementspath';
     CKEDITOR.replace("content");
-    if (method == "PUT") {
+    if (method === "PUT") {
         CKEDITOR.instances.content.setData(content);
         $("#title").val(title);
     }
@@ -56,15 +58,17 @@
     });
 
     function try_submit() {
+        var form = new FormData();
+        form.append("title", $("#title").val());
+        form.append("content", CKEDITOR.instances.content.getData());
         $.ajax({
             url: url,
             method: method,
-            dataType: "json",
-            data: {
-                "title": $("#title").val(),
-                "content": CKEDITOR.instances.content.getData()
-            },
+            processData: false,
+            contentType: false,
+            data: form,
             success: function (resp) {
+                console.log(resp);
                 window.location.href = "/topic/" + resp.data;
             }
         });

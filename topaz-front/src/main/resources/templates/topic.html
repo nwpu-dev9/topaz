@@ -24,12 +24,12 @@
                     </a>
                 </div>
                 <div class="topic-actions">
-                    <a href="javascript:void(0);" class="favorite-link off" onclick="toggle_favorite()">
+                    <button class="favorite-button"
+                            th:classappend="${favoriteTopic}?'on':'off'"
+                            th:data-disabled="${session.userId==null}"
+                            onclick="toggle_favorite()">
                         <i class="far fa-heart"></i>收藏
-                    </a>
-                    <a href="javascript:void(0);" class="upvote-link off">
-                        <i class="far fa-thumbs-up"></i>赞
-                    </a>
+                    </button>
                 </div>
             </div>
             <div class="topic-content" th:utext="${topic.content}"></div>
@@ -81,6 +81,41 @@
         event.preventDefault();
         try_submit();
     });
+
+    function toggle_favorite() {
+        var button = $(".favorite-button");
+        if (button.data("disabled")===true)
+            return;
+        if (button.hasClass("off")) {
+            $.ajax({
+                url: "/api/user/favorite",
+                method: "POST",
+                dataType: "json",
+                data: {
+                    "topicId": [[${topic.topicId}]],
+                },
+                success: function (resp) {
+                    button.removeClass("off");
+                    button.addClass("on");
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        } else {
+            $.ajax({
+                url: "/api/user/favorite/" + [[${topic.topicId}]],
+                method: "DELETE",
+                success: function (resp) {
+                    button.removeClass("on");
+                    button.addClass("off");
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+    }
 
     function try_submit() {
         $.ajax({
