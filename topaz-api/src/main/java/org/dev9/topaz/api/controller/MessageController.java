@@ -15,6 +15,7 @@ import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.enums.PermissionType;
 import org.dev9.topaz.common.util.SensitiveWordUtil;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -107,7 +108,7 @@ public class MessageController {
         Integer userId=(Integer) session.getAttribute("userId");
 
         User user=userRepository.findById(userId).orElse(null);
-        List<MessageSearchResult> messages=messageSearchRepository.findAllByReceiver(user);
+        List<MessageSearchResult> messages=messageSearchRepository.findAllByReceiver(user, Sort.by("sentTime"));
         messages.addAll(messageSearchRepository.findAllBySender(user));
 
         RESTfulResponse<List<MessageSearchResult>> response=RESTfulResponse.ok();
