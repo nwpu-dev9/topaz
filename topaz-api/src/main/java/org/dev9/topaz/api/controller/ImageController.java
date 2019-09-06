@@ -3,6 +3,7 @@ package org.dev9.topaz.api.controller;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.model.RESTfulResponse;
 import org.dev9.topaz.api.service.ImageService;
+import org.dev9.topaz.common.configuration.WebConfig;
 import org.dev9.topaz.common.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 @Controller
@@ -30,11 +33,13 @@ public class ImageController {
 
     @PostMapping("/image")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> imageUpload(@RequestParam MultipartFile image) throws ApiNotFoundException {
+    public ResponseEntity<Map> imageUpload(@RequestParam MultipartFile image) throws ApiNotFoundException {
         String filename=imageService.saveImage(image);
 
-        RESTfulResponse<String> response=RESTfulResponse.ok();
-        response.setData(filename);
-        return ResponseEntity.ok(response);
+        RESTfulResponse<Map<String, String>> response=RESTfulResponse.ok();
+        Map map=new HashMap<String, String>();
+        map.put("url", "http://localhost:8080"+ WebConfig.RESOURCE_PATH+"/image/"+filename);
+        // response.setData(map);
+        return ResponseEntity.ok(map);
     }
 }
