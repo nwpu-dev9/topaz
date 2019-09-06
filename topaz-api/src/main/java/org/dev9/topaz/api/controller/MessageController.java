@@ -109,7 +109,7 @@ public class MessageController {
 
         User user=userRepository.findById(userId).orElse(null);
         List<MessageSearchResult> messages=messageSearchRepository.findAllByReceiver(user, Sort.by("sentTime"));
-        messages.addAll(messageSearchRepository.findAllBySender(user));
+        messages.addAll(messageSearchRepository.findAllBySender(user, Sort.by("sentTime")));
 
         RESTfulResponse<List<MessageSearchResult>> response=RESTfulResponse.ok();
         response.setData(messages);
