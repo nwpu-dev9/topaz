@@ -36,9 +36,13 @@ public class ImageController {
     public ResponseEntity<Map> imageUpload(@RequestParam MultipartFile image) throws ApiNotFoundException {
         String filename=imageService.saveImage(image);
 
-        RESTfulResponse<Map<String, String>> response=RESTfulResponse.ok();
-        Map map=new HashMap<String, String>();
-        map.put("url", "http://localhost:8080"+ WebConfig.RESOURCE_PATH+"/image/"+filename);
+        RESTfulResponse<Map<String, Object>> response=RESTfulResponse.ok();
+        Map map=new HashMap<String, Object>();
+        // map.put("url", "http://localhost:8080"+ WebConfig.RESOURCE_PATH+"/image/"+filename);
+        map.put("url", WebConfig.RESOURCE_PATH+"/image/"+filename);
+        map.put("uploaded", 1);
+        map.put("fileName", filename);
+
         // response.setData(map);
         return ResponseEntity.ok(map);
     }
