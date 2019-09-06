@@ -4,6 +4,7 @@ import jnr.ffi.annotations.In;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.exception.ApiUnauthorizedException;
 import org.dev9.topaz.api.model.RESTfulResponse;
+import org.dev9.topaz.api.model.result.impl.TopicSearchResultImpl;
 import org.dev9.topaz.api.service.UserService;
 import org.dev9.topaz.common.annotation.Permission;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
@@ -25,6 +26,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller("ApiUserController")
@@ -117,9 +119,15 @@ public class UserController {
             throw new ApiNotFoundException("no such user");
 
         List<Topic> favorites=user.getFavoriteTopics();
+        List<TopicSearchResultImpl> results=new ArrayList<>();
 
-        RESTfulResponse<List<Topic>> response=RESTfulResponse.ok();
-        response.setData(favorites);
+        for (Topic topic: favorites)
+            results.add(new TopicSearchResultImpl(topic));
+
+        RESTfulResponse<List<TopicSearchResultImpl>> response=RESTfulResponse.ok();
+        // response.setData(favorites);
+        response.setData(results);
+
         return ResponseEntity.ok(response);
     }
 
