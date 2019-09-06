@@ -31,9 +31,14 @@
                 th:if="${session.userId!=null&&session.userId!=user.userId}">
             发私信
         </button>
-        <div class="favorite-topics">
-
-        </div>
+        <th:block th:if="${session.userId==user.userId}">
+            <h2 style="margin-top: 1.2rem;">收藏</h2>
+            <div class="favorite-topics">
+            </div>
+            <div class="empty-list-notice">
+                收藏从缺
+            </div>
+        </th:block>
     </div>
 </div>
 <div th:replace="common::footer">
@@ -57,7 +62,7 @@
         </div>
     </div>
 </div>
-<script id="topic-template" type="text/x-handlebars-template">
+<script id="item-template" type="text/x-handlebars-template">
     {{#each topics}}
     <div class="favorite-item d-flex flex-row">
         <div class="item-title mr-auto">
@@ -74,6 +79,8 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ckeditor@4.12.1/ckeditor.js"></script>
 <script th:inline="javascript">
+    var source = document.getElementById("item-template").innerHTML;
+    var template = Handlebars.compile(source);
     CKEDITOR.config.language = "zh-cn";
     CKEDITOR.config.removePlugins = 'elementspath';
     CKEDITOR.replace("message-editor");
@@ -106,14 +113,18 @@
                 resp.data.forEach((element) => {
                     element.postTime = moment.unix(element.postTime).format("YYYY-M-D H:mm");
                 });
-                $(".favorite-topics").html(template({topics: resp.data}));
+                if (resp.data.length !== 0) {
+                    $(".favorite-topics").html(template({topics: resp.data}));
+                } else {
+                    $(".empty-list-notice").show();
+                }
             }
         });
     }
 </script>
 <script th:if="${session.userId==user.userId}">
     $(() => {
-        show_favorites()
+        show_favorites();
     });
 </script>
 </body>
