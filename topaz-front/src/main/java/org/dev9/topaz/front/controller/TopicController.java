@@ -40,7 +40,7 @@ public class TopicController {
         params.put("topic", topic.get());
         params.put("user", user);
         if (user != null) {
-            params.put("inFavorites", user.getFavoriteTopics().indexOf(topic.get()) < 0);
+            params.put("favoriteTopic", user.getFavoriteTopics().indexOf(topic.get()) != -1);
         }
         return new ModelAndView("topic", params);
     }

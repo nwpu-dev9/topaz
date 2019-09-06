@@ -56,7 +56,17 @@
     flex-direction: row;
 }
 
-.topic-actions a {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+.topic-actions button {
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    border: none;
+    background: none;
+}
+
+.favorite-button.on {
+    color: rgb(255, 69, 0);
+}
+
+.favorite-button.off {
+    color: #777777;
 }
