@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 @Controller
@@ -42,13 +44,19 @@ public class ImageController {
 
     @PostMapping("/image")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> imageUpload(@RequestParam MultipartFile image) throws ApiNotFoundException {
+    public ResponseEntity<Map> imageUpload(@RequestParam("upload") MultipartFile image) throws ApiNotFoundException {
         String filename=imageService.saveImage(image);
         logger.info("send "+filename);
         rabbitTemplate.convertAndSend("topaz.exchange", RabbitMqConfig.getRouteKey(), filename);
 
-        RESTfulResponse<String> response=RESTfulResponse.ok();
-        response.setData(filename);
-        return ResponseEntity.ok(response);
+        RESTfulResponse<Map<String, Object>> response=RESTfulResponse.ok();
+        Map map=new HashMap<String, Object>();
+        // map.put("url", "http://localhost:8080"+ WebConfig.RESOURCE_PATH+"/image/"+filename);
+        map.put("url", WebConfig.RESOURCE_PATH+"/image/"+filename);
+        map.put("uploaded", 1);
+        map.put("fileName", filename);
+
+        // response.setData(map);
+        return ResponseEntity.ok(map);
     }
 }

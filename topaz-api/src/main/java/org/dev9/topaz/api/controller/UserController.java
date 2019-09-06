@@ -1,10 +1,8 @@
 package org.dev9.topaz.api.controller;
 
-import jnr.ffi.annotations.In;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.exception.ApiUnauthorizedException;
 import org.dev9.topaz.api.model.RESTfulResponse;
-import org.dev9.topaz.api.model.result.TopicSearchResult;
 import org.dev9.topaz.api.model.result.impl.TopicSearchResultImpl;
 import org.dev9.topaz.api.service.UserService;
 import org.dev9.topaz.common.annotation.Permission;
@@ -74,7 +72,7 @@ public class UserController {
     @PostMapping(value = "/user/favorite")
     @ResponseBody
     @Permission(PermissionType.USER)
-    public ResponseEntity<RESTfulResponse> addFavoriteTopic(// @PathVariable("id") Integer id,
+    public synchronized ResponseEntity<RESTfulResponse> addFavoriteTopic(// @PathVariable("id") Integer id,
                                                             @RequestParam Integer topicId,
                                                             HttpSession session) throws ApiNotFoundException, ApiUnauthorizedException {
         Integer sessionUserId=(Integer)session.getAttribute("userId");
@@ -93,7 +91,7 @@ public class UserController {
 
     @DeleteMapping("/user/favorite/{tid}")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> deleteFavoriteTopic(// @PathVariable("uid") Integer userId,
+    public synchronized ResponseEntity<RESTfulResponse> deleteFavoriteTopic(// @PathVariable("uid") Integer userId,
                                                                 @PathVariable("tid") Integer topicId,
                                                                 HttpSession session){
         Integer sessionUserId=(Integer)session.getAttribute("userId");

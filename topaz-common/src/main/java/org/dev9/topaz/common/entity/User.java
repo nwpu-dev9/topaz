@@ -39,7 +39,7 @@ public class User {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
     @JoinTable(name = "favorite_topic")
-    private List<Topic> favoriteTopics;
+    private List<Topic> favoriteTopics = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean admin;
@@ -55,7 +55,7 @@ public class User {
         this.profile = null;
         this.avatarUrl = null;
         this.favoriteTopics = new ArrayList<>();
-        this.admin=admin;
+        this.admin = admin;
     }
 
     @Override
@@ -75,8 +75,8 @@ public class User {
         this.admin = admin;
     }
 
-    public Boolean verifyPassword(String password){
-        String passwordHash=HashingUtil.hashPassword(password.toCharArray(), this.passwordSalt);
+    public Boolean verifyPassword(String password) {
+        String passwordHash = HashingUtil.hashPassword(password.toCharArray(), this.passwordSalt);
         return passwordHash.equals(this.getPasswordHash());
     }
 

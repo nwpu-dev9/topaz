@@ -48,6 +48,9 @@ public class IndexController
         if (null == session.getAttribute("userId"))
             return  "back_login";
 
+        if (!userRepository.findById((Integer) session.getAttribute("userId")).orElse(null).isAdmin())
+            return  "back_login";
+
         Integer userId=(Integer)session.getAttribute("userId");
         User user = userRepository.findById(userId).orElse(null);
         List<Topic> topics = topicRepository.findAll();

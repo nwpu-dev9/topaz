@@ -34,7 +34,7 @@
                             <a th:href="@{/register}" class="btn btn-outline-light btn-success">注册</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/login}" class="btn btn-outline-light btn-primary">登录</a>
+                            <a th:href="@{/login}" class="btn btn-outline-light btn-primary"  id="login-link">登录</a>
                         </li>
                     </th:block>
                     <th:block th:case="true">
@@ -44,7 +44,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="javascript:void(0);" onclick="logout()" class="btn btn-outline-light">退出</a>
+                            <a href="/messages" class="nav-link active">
+                                私信
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0);" onclick="logout()" class="btn btn-outline-light">
+                                退出
+                            </a>
                         </li>
                     </th:block>
                 </ul>

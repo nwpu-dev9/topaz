@@ -1,6 +1,7 @@
 package org.dev9.topaz.back.controller;
 
 import org.dev9.topaz.common.dao.repository.MessageRepository;
+import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.exception.PageNotFoundException;
@@ -25,6 +26,9 @@ import java.util.Optional;
 public class MessageController {
 
     @Resource
+    private UserRepository userRepository;
+
+    @Resource
     private MessageRepository messageRepository;
 
     @GetMapping({"", "/"})
@@ -34,6 +38,10 @@ public class MessageController {
                              Map<String, Object> map){
         if (null == session.getAttribute("userId"))
             return  "back_login";
+
+        if (!userRepository.findById((Integer) session.getAttribute("userId")).orElse(null).isAdmin())
+            return  "back_login";
+
 
             Page<Message> messagePage = messageRepository.findAll(PageRequest.of(page, limit, Sort.by("sentTime")));
             map.put("messages", messagePage.getContent());

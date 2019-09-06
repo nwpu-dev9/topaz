@@ -14,3 +14,8 @@ function logout() {
         }
     );
 }
+
+$("#login-link").bind('click', function (event) {
+    event.preventDefault();
+    window.location.href = "/login?" + $.param({"return": window.location.pathname + window.location.search});
+})

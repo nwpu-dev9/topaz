@@ -15,14 +15,11 @@ public class ImageServiceImpl implements ImageService {
     public String saveImage(MultipartFile image) throws ApiNotFoundException {
         try {
             String fileExtName=FileUtil.getExtName(image);
-            String filename=FileUtil.saveMultipartFile(image);
 
             if (!FileUtil.isImage(fileExtName))
                 throw new ApiNotFoundException("file extension is not allowed");
 
-            FileUtil.saveMultipartFile(image);
-
-            return filename;
+            return FileUtil.saveMultipartFile(image);
         } catch (IOException e) {
             throw new ApiNotFoundException("server error");
         } catch (Exception e){

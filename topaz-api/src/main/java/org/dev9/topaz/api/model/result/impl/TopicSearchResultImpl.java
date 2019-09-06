@@ -21,7 +21,7 @@ public class TopicSearchResultImpl implements TopicSearchResult {
         this.title = topic.getTitle();
         this.content = topic.getContent();
         this.postTime = topic.getPostTime();
-        this.poster = null;// topic.getPoster();
+        this.poster = new UserSearchResultImpl(topic.getPoster()); // null;// topic.getPoster();
         this.favoriteCount = topic.getFavoriteCount();
         this.visitedCount = topic.getVisitedCount();
         this.audited = topic.getAudited();
