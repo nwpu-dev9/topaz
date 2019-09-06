@@ -33,7 +33,7 @@ public class ImageController {
 
     @PostMapping("/image")
     @ResponseBody
-    public ResponseEntity<Map> imageUpload(@RequestParam MultipartFile image) throws ApiNotFoundException {
+    public ResponseEntity<Map> imageUpload(@RequestParam("upload") MultipartFile image) throws ApiNotFoundException {
         String filename=imageService.saveImage(image);
 
         RESTfulResponse<Map<String, Object>> response=RESTfulResponse.ok();
