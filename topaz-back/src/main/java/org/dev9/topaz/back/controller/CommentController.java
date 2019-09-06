@@ -5,6 +5,7 @@ import org.dev9.topaz.common.dao.query.CommentQuery;
 import org.dev9.topaz.common.dao.repository.CommentRepository;
 import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
+import org.dev9.topaz.common.dao.repository.UserRepository;
 import org.dev9.topaz.common.entity.Comment;
 import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.Topic;
@@ -35,6 +36,9 @@ public class CommentController {
     private CommentRepository commentRepository;
 
     @Resource
+    private UserRepository userRepository;
+
+    @Resource
     private MessageRepository messageRepository;
 
     @GetMapping({"", "/"})
@@ -45,6 +49,9 @@ public class CommentController {
                              Map<String, Object> map){
         if (null == session.getAttribute("userId"))
             return  "back_login";
+        if (!userRepository.findById((Integer) session.getAttribute("userId")).orElse(null).isAdmin())
+            return  "back_login";
+
         if (null != query){
                 map.put("query", query);
             return "back_comment_index_query";
@@ -72,6 +79,9 @@ public class CommentController {
                                Map<String, Object> map){
         if (null == session.getAttribute("userId"))
             return  "back_login";
+        if (!userRepository.findById((Integer) session.getAttribute("userId")).orElse(null).isAdmin())
+            return  "back_login";
+
 
             Page<Comment> commentPage = commentRepository.findAll(PageRequest.of(page, limit, Sort.by("commentTime")));
             map.put("comments", commentPage.getContent());

@@ -73,7 +73,7 @@ public class UserController {
     @PostMapping(value = "/user/favorite")
     @ResponseBody
     @Permission(PermissionType.USER)
-    public ResponseEntity<RESTfulResponse> addFavoriteTopic(// @PathVariable("id") Integer id,
+    public synchronized ResponseEntity<RESTfulResponse> addFavoriteTopic(// @PathVariable("id") Integer id,
                                                             @RequestParam Integer topicId,
                                                             HttpSession session) throws ApiNotFoundException, ApiUnauthorizedException {
         Integer sessionUserId=(Integer)session.getAttribute("userId");
@@ -92,7 +92,7 @@ public class UserController {
 
     @DeleteMapping("/user/favorite/{tid}")
     @ResponseBody
-    public ResponseEntity<RESTfulResponse> deleteFavoriteTopic(// @PathVariable("uid") Integer userId,
+    public synchronized ResponseEntity<RESTfulResponse> deleteFavoriteTopic(// @PathVariable("uid") Integer userId,
                                                                 @PathVariable("tid") Integer topicId,
                                                                 HttpSession session){
         Integer sessionUserId=(Integer)session.getAttribute("userId");

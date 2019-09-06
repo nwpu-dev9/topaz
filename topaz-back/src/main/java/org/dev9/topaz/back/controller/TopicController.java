@@ -46,6 +46,9 @@ public class TopicController {
 
         if (null == session.getAttribute("userId"))
             return  "back_login";
+        if (!userRepository.findById((Integer) session.getAttribute("userId")).orElse(null).isAdmin())
+            return  "back_login";
+
 
         if (null != query){
             map.put("query", query);
@@ -75,6 +78,9 @@ public class TopicController {
 
         if (null == session.getAttribute("userId"))
             return "back_login";
+        if (!userRepository.findById((Integer) session.getAttribute("userId")).orElse(null).isAdmin())
+            return  "back_login";
+
 
         TopicQuery topicQuery=new TopicQuery(){{
             setAuditedEqual(false);
