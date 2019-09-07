@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-hans en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Topaz - 登录</title>
+    <th:block th:replace="common::stylesheets">
+    </th:block>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+<div th:replace="common::header"></div>
+<div class="container">
+    <div class="content">
+        <div class="login-form-container">
+            <form id="login-form" action="#">
+                <img src="/image/register.jpg">
+                <h1>用户登录</h1>
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="用户名" id="name">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="password" placeholder="登录密码" id="password">
+                </div>
+                <div id="alert" class="alert"></div>
+                <button type="submit" class="btn btn-success">登录</button>
+                <div>
+                    <span>还没有帐号？ </span>
+                    <a href="/register">立即注册</a>
+                    •
+                    <a href="/"> 游客访问</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:replace="common::footer">
+</div>
+<script th:inline="javascript">
+    var return_url = [[${return}]];
+</script>
+<script src="/js/login-front.js"></script>
+</body>
+</html>

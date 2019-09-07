@@ -1,0 +1,11 @@
+body {
+    background: url("/image/bg.jpg") no-repeat;
+}
+
+body {
+    text-align: center;
+}
+
+.login-form-container img {
+    width: 140px;
+}

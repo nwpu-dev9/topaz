@@ -1,7 +1,7 @@
 package org.dev9.topaz.common.entity;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.Instant;
 
 @Entity
 @Table(name = "COMMENT")
@@ -10,25 +10,34 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column
-    private Date commentTime;
+    @Column(nullable = false)
+    private Instant commentTime;
 
-    @Column
-    private Integer commentUserId;
+    @ManyToOne
+    @JoinColumn(name = "commenter_id", nullable = false)
+    private User commenter;
 
-    @Column
-    private Integer topicId;
+    @ManyToOne
+    @JoinColumn(name = "topic_id", nullable = false)
+    private Topic topic;
 
-    public Comment() {}
+    @Column(name = "is_audited", columnDefinition = "boolean", nullable = false)
+    private Boolean audited;
 
-    public Comment(String content, Date commentTime, Integer commentUserId, Integer topicId) {
+    public Comment() {
+        this.commentTime = Instant.now();
+        this.topic = null;
+    }
+
+    public Comment(String content, Instant commentTime, User commenter, Topic topic, Boolean audited) {
         this.content = content;
-        this.commentTime = commentTime;
-        this.commentUserId = commentUserId;
-        this.topicId = topicId;
+        this.commentTime = commentTime == null ? Instant.now() : commentTime;
+        this.commenter = commenter;
+        this.topic = topic;
+        this.audited=audited;
     }
 
     @Override
@@ -37,9 +46,17 @@ public class Comment {
                 "commentId=" + commentId +
                 ", content='" + content + '\'' +
                 ", commentTime=" + commentTime +
-                ", commentUserId=" + commentUserId +
-                ", topicId=" + topicId +
+                ", commenter=" + commenter.getUserId() +
+                ", topic=" + topic.getTopicId() +
                 '}';
+    }
+
+    public Boolean getAudited() {
+        return audited;
+    }
+
+    public void setAudited(Boolean audited) {
+        this.audited = audited;
     }
 
     public Integer getCommentId() {
@@ -58,27 +75,27 @@ public class Comment {
         this.content = content;
     }
 
-    public Date getCommentTime() {
+    public Instant getCommentTime() {
         return commentTime;
     }
 
-    public void setCommentTime(Date commentTime) {
+    public void setCommentTime(Instant commentTime) {
         this.commentTime = commentTime;
     }
 
-    public Integer getCommentUserId() {
-        return commentUserId;
+    public User getCommenter() {
+        return commenter;
     }
 
-    public void setCommentUserId(Integer commentUserId) {
-        this.commentUserId = commentUserId;
+    public void setCommenter(User commenter) {
+        this.commenter = commenter;
     }
 
-    public Integer getTopicId() {
-        return topicId;
+    public Topic getTopic() {
+        return topic;
     }
 
-    public void setTopicId(Integer topicId) {
-        this.topicId = topicId;
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 }

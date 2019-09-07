@@ -1,7 +1,9 @@
 package org.dev9.topaz.common.entity;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.time.Instant;
 
 @Entity
 @Table(name = "MESSAGE")
@@ -10,49 +12,48 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer messageId;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column
-    private Date sentTime;
+    @Column(nullable = false)
+    private Instant sentTime;
 
-    @Column
+    @Column(nullable = false)
     private Boolean isLooked;
 
-    @Column
-    private Integer sentUserId;
+    @ManyToOne
+    @JoinColumn(name = "sender_uid", nullable = false)
+    private User sender;
 
-    @Column
-    private Integer receiveUserId;
+    @ManyToOne
+    @JoinColumn(name = "receiver_uid", nullable = false)
+    private User receiver;
 
-    public Message(){}
+    @Column(name = "is_audited", columnDefinition = "boolean", nullable = false)
+    private Boolean audited;
 
-    public Message(String content, Date sentTime, Boolean isLooked, Integer sentUserId, Integer receiveUserId) {
+    public Message() {
+    }
+
+    public Message(String content, Instant sentTime, Boolean isLooked, User sender, User receiver, Boolean audited) {
         this.content = content;
         this.sentTime = sentTime;
         this.isLooked = isLooked;
-        this.sentUserId = sentUserId;
-        this.receiveUserId = receiveUserId;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.audited=audited;
     }
 
-    @Override
-    public String toString() {
-        return "Message{" +
-                "messageId=" + messageId +
-                ", content='" + content + '\'' +
-                ", sentTime=" + sentTime +
-                ", isLooked=" + isLooked +
-                ", sentUserId=" + sentUserId +
-                ", receiveUserId=" + receiveUserId +
-                '}';
+    public Boolean getAudited() {
+        return audited;
+    }
+
+    public void setAudited(Boolean audited) {
+        this.audited = audited;
     }
 
     public Integer getMessageId() {
         return messageId;
-    }
-
-    public void setMessageId(Integer messageId) {
-        this.messageId = messageId;
     }
 
     public String getContent() {
@@ -63,11 +64,11 @@ public class Message {
         this.content = content;
     }
 
-    public Date getSentTime() {
+    public Instant getSentTime() {
         return sentTime;
     }
 
-    public void setSentTime(Date sentTime) {
+    public void setSentTime(Instant sentTime) {
         this.sentTime = sentTime;
     }
 
@@ -79,20 +80,20 @@ public class Message {
         isLooked = looked;
     }
 
-    public Integer getSentUserId() {
-        return sentUserId;
+    public User getSender() {
+        return sender;
     }
 
-    public void setSentUserId(Integer sentUserId) {
-        this.sentUserId = sentUserId;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
-    public Integer getReceiveUserId() {
-        return receiveUserId;
+    public User getReceiver() {
+        return receiver;
     }
 
-    public void setReceiveUserId(Integer receiveUserId) {
-        this.receiveUserId = receiveUserId;
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
     }
 }
 

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="xwm" content="">
+    <title>Topaz - 话题列表</title>
+    <!-- Bootstrap core CSS-->
+    <div th:replace="back_common::dependency"></div>
+    <script>
+
+        function delete_id(id) {
+            $.ajax({
+                url: "/api/admin/comment/"+id,
+                type: "delete",
+                success: function (msg) {
+                    $("#list"+id).remove();
+                }
+            })
+        }
+    </script>
+</head>
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+
+<div th:replace="back_common::manage-head"></div>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <form action="/admin/comment" method="get" class="form-inline">
+                <input name="query" th:type="text" placeholder="查找回复" class="form-control">
+                <button class="search-button btn btn-outline-light" type="submit">
+                    <span class="fas fa-search"></span>
+                </button>
+            </form>
+        </ol>
+        <!-- Example DataTables Card-->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-table"></i>回复列表</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0" id="comment-list">
+                        <thead>
+                        <tr>
+                            <th>回复ID</th>
+                            <th>回复时间</th>
+                            <th>回复话题</th>
+                            <th>回复者</th>
+                            <th>回复内容</th>
+                            <th>是否审核</th>
+                            <th>删除</th>
+                        </tr>
+                        </thead>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Logout Modal-->
+        <div th:replace="back_common::logout-part"></div>
+    </div>
+</div>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/js/jquery.easing.min.js}"></script>
+<!-- Page level plugin JavaScript-->
+<script th:src="@{/js/jquery.dataTables.js}"></script>
+<script th:src="@{/js/dataTables.bootstrap4.js}"></script>
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin.min.js}"></script>
+<!-- Custom scripts for this page-->
+<script th:src="@{/js/sb-admin-datatables.min.js}"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/handlebars@4.1.2/dist/handlebars.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+<script id="comment-template" type="text/x-handlebars-template">
+    {{#each comments}}
+    <tr id="list{{commentId}}">
+        <td ><a href="/comment/{{commentId}}">{{commentId}}</a></td>
+        <td>{{commentTime}}</td>
+        <td>{{topic.title}}</td>
+        <td>{{commenter.name}}</td>
+        <td> <div class="dropdown-comment small">{{content}}</div></td>
+        <td>{{audited}}</td>
+        <td>
+            <button class="btn-outline-light" onclick="delete_id({{topicId}});" style="background-color: #c82333; width: 70px; height: 30px">
+                <span class="text-lg-center">×</span>
+            </button>
+        </td>
+    </tr>
+    {{/each}}
+</script>
+<script th:inline="javascript">
+    var source = document.getElementById("comment-template").innerHTML;
+    var template = Handlebars.compile(source);
+    $.ajax({
+        url: "/api/comment/search",
+        dataType: "json",
+        type: "post",
+        data: {
+            "title": [[${query}]]
+        },
+        success: function (resp) {
+            console.log(resp);
+            resp.data.forEach((element) => {
+                element.commentTime = moment.unix(element.commentTime).format("YYYY-M-D H:mm");
+        });
+            $("#comment-list").append(template({comments: resp.data}));
+        },
+    });
+</script>
+
+</body>
+</html>

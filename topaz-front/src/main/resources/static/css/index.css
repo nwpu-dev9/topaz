@@ -1,0 +1,30 @@
+.topic-item {
+    width: 100%;
+    padding-top: 1.2em;
+    padding-bottom: 1.2em;
+    border-bottom: 1px #e1e1e1 solid;
+}
+
+.topic-title {
+    font-size: 1.5em;
+}
+
+.topic-comment-count {
+    float: right;
+    padding: 0.5em;
+    background-color: rgba(28, 25, 22, 0.1);
+    border-radius: 0.5em;
+}
+
+label {
+    padding-right: 0.2em;
+    font-weight: normal;
+}
+
+.fa-comments {
+    padding-right: 0.7rem;
+}
+
+.fa-plus {
+    padding-right: 0.3rem;
+}

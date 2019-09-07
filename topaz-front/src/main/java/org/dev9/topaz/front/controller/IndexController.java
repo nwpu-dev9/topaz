@@ -1,34 +1,75 @@
 package org.dev9.topaz.front.controller;
 
+import org.dev9.topaz.common.dao.repository.TopicRepository;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.exception.PageNotFoundException;
-import org.dev9.topaz.front.service.FrontTopicService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import java.util.Enumeration;
 import java.util.Map;
 
 @Controller
 public class IndexController {
-    @Resource(name = "FrontTopicService")
-    private FrontTopicService frontTopicService;
+    @Resource
+    private TopicRepository topicRepository;
 
-    @GetMapping({"/index", "/", ""})
-    public String index(@RequestParam(value = "page", defaultValue = "0") Integer page,
-                        @RequestParam(value = "limit", defaultValue = "20") Integer limit,
-                        Map<String, Object> map){
-        Page<Topic> topics=frontTopicService.findAllTopicPages(page, limit);
+    class Pager implements Enumeration<Integer> {
+        int pageCount;
+        int counter = 1;
 
+        public Pager(int pageCount) {
+            this.pageCount = pageCount;
+        }
+
+        public int getPageCount() {
+            return pageCount;
+        }
+
+        public int getCounter() {
+            return counter;
+        }
+
+        public boolean hasPrevious() {
+            return counter != 1;
+        }
+
+        public boolean hasNext() {
+            return counter != pageCount;
+        }
+
+        @Override
+        public boolean hasMoreElements() {
+            return counter <= pageCount;
+        }
+
+        @Override
+        public Integer nextElement() {
+            if (counter <= pageCount) {
+                int page = counter;
+                counter++;
+                return page;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    @GetMapping(value = "/")
+    public String index(@RequestParam(defaultValue = "1") Integer page,
+                        @RequestParam(defaultValue = "20") Integer limit,
+                        Map<String, Object> map) {
+
+        Page<Topic> topics = topicRepository.findAll(PageRequest.of(page - 1, limit, Sort.by("postTime").descending()));
         map.put("topics", topics.getContent());
         map.put("page", page);
         map.put("limit", limit);
-        map.put("pageCount", topics.getTotalPages());
-
+        map.put("pager", new Pager(topics.getTotalPages()));
         return "index";
     }
 

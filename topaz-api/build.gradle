@@ -1,0 +1,18 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+            exclude '**/test'
+        }
+    }
+}
+
+
+dependencies {
+    implementation project(":topaz-common")
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-configuration-processor'
+    compile 'io.springfox:springfox-spring-web:2.9.1'
+    compile 'io.springfox:springfox-swagger2:2.9.1'
+}

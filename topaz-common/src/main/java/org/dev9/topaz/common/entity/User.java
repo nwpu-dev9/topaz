@@ -1,66 +1,99 @@
 package org.dev9.topaz.common.entity;
 
+import org.dev9.topaz.common.util.HashingUtil;
+
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO: shiro: Boolean isAdmin?
 
 @Entity
-@Table(name = "USER")
+@Table(name = "USERS")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    @Column
+    @Column(columnDefinition = "TEXT", unique = true)
     private String phoneNumber;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false, unique = true)
     private String name;
 
-    @Column
-    private String encryptedPassword;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String passwordHash;
 
-    @Column
-    private Date signupTime;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String passwordSalt;
 
-    @Column
+    @Column(nullable = false)
+    private Instant signupTime;
+
+    @Column(columnDefinition = "TEXT")
     private String profile;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String avatarUrl;
 
-    public User(){}
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
+    @JoinTable(name = "favorite_topic")
+    private List<Topic> favoriteTopics = new ArrayList<>();
 
-    public User(String phoneNumber, String name, String encryptedPassword, Date signupTime, String profile, String avatarUrl) {
-        this.phoneNumber = phoneNumber;
+    @Column(nullable = false)
+    private boolean admin;
+
+    public User() {
+    }
+
+    public User(String name, String phoneNumber, String password, Instant signupTime, boolean admin) {
         this.name = name;
-        this.encryptedPassword = encryptedPassword;
-        this.signupTime = signupTime;
-        this.profile = profile;
-        this.avatarUrl = avatarUrl;
+        this.phoneNumber = phoneNumber;
+        this.changePassword(password);
+        this.signupTime = signupTime != null ? signupTime : Instant.now();
+        this.profile = null;
+        this.avatarUrl = null;
+        this.favoriteTopics = new ArrayList<>();
+        this.admin = admin;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "userId=" + userId +
-                ", phoneNumber='" + phoneNumber + '\'' +
                 ", name='" + name + '\'' +
-                ", encryptedPassword='" + encryptedPassword + '\'' +
                 ", signupTime=" + signupTime +
-                ", profile='" + profile + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
                 '}';
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    public Boolean verifyPassword(String password) {
+        String passwordHash = HashingUtil.hashPassword(password.toCharArray(), this.passwordSalt);
+        return passwordHash.equals(this.getPasswordHash());
+    }
+
+    public List<Topic> getFavoriteTopics() {
+        return favoriteTopics;
+    }
+
+    public void addFavoriteTopic(Topic topic) {
+        this.favoriteTopics.add(topic);
+    }
+
+    public void removeFavoriteTopic(Topic topic) {
+        this.favoriteTopics.remove(topic);
     }
 
     public Integer getUserId() {
         return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getPhoneNumber() {
@@ -79,19 +112,24 @@ public class User {
         this.name = name;
     }
 
-    public String getEncryptedPassword() {
-        return encryptedPassword;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setEncryptedPassword(String encryptedPassword) {
-        this.encryptedPassword = encryptedPassword;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
-    public Date getSignupTime() {
+    public void changePassword(String newPassword) {
+        this.passwordSalt = HashingUtil.generateSalt(32);
+        this.passwordHash = HashingUtil.hashPassword(newPassword.toCharArray(), this.passwordSalt);
+    }
+
+    public Instant getSignupTime() {
         return signupTime;
     }
 
-    public void setSignupTime(Date signupTime) {
+    public void setSignupTime(Instant signupTime) {
         this.signupTime = signupTime;
     }
 

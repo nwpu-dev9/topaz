@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-hans en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>BBS 搜索</title>
+    <th:block th:replace="common::stylesheets">
+    </th:block>
+    <link rel="stylesheet" th:href="@{/css/search.css}">
+    <script th:src="@{/js/search.js}"></script>
+</head>
+<body>
+<div th:replace="common::header">
+</div>
+<div class="container">
+    <div class="content">
+        <div class="module-name">
+            <h1>搜索-全部结果</h1>
+        </div>
+        <div class="post-list">
+        </div>
+        <!--
+        <div class="info">
+            <div class="relative">
+                <h3>推荐帖子</h3>
+                <ul id="hot"></ul>
+            </div>
+        </div>
+        -->
+    </div>
+</div>
+<div th:replace="common::footer">
+</div>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@4.1.2/dist/handlebars.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+<script id="topic-template" type="text/x-handlebars-template">
+    {{#each topics}}
+    <div class="topic-item">
+        <div class="topic-title">
+            <a href="/topic/{{topicId}}">{{title}}</a>
+        </div>
+        <div class="topic-info">
+            <a class="topic-poster-name" href="/user/{{poster.userId}}">{{poster.name}}</a>
+            <span>{{postTime}}</span>
+        </div>
+    </div>
+    {{/each}}
+</script>
+<script th:inline="javascript">
+    var source = document.getElementById("topic-template").innerHTML;
+    var template = Handlebars.compile(source);
+    $.ajax({
+        url: "/api/topic/search",
+        dataType: "json",
+        type: "post",
+        data: {
+            "title": [[${query}]]
+        },
+        success: function (resp) {
+            console.log(template({topics: resp.data}));
+            resp.data.forEach((element) => {
+                element.postTime = moment.unix(element.postTime).format("YYYY-M-D H:mm");
+            });
+            $(".post-list").html(template({topics: resp.data}));
+        }
+    });
+</script>
+</body>
+</html>

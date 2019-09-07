@@ -1,6 +1,6 @@
 package org.dev9.topaz.common.exception;
 
-public class UnauthorizedException extends Exception{
+public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException(){
         super();
     }

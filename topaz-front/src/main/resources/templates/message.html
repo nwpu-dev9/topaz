@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-hans en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Topaz - 私信</title>
+    <th:block th:replace="common::stylesheets">
+    </th:block>
+    <link rel="stylesheet" th:href="@{/css/message.css}">
+</head>
+<body>
+<div th:replace="common :: header">
+</div>
+<div class="container">
+    <div class="content">
+        <div class="module-titlebar">
+            <div class="d-flex flex-row">
+                <div class="mr-auto module-name">
+                    私信
+                </div>
+            </div>
+        </div>
+        <div class="message-list">
+            <div th:each="message: ${messages}" class="card">
+                <div class="d-flex flex-row card-header" onclick="toggle_message_detail(this)"
+                     th:data-message-id="${message.messageId}">
+                    <div class="mr-auto" th:text="${message.sender.name}"></div>
+                    <div th:text="${formatter.format(message.sentTime)}"></div>
+                </div>
+                <div class="collapse">
+                    <div class="card-body message-content"></div>
+                </div>
+            </div>
+        </div>
+        <div class="no-message-notice" th:if="${messages.size()==0}">
+            当前没有私信
+        </div>
+    </div>
+</div>
+<div th:replace="common::footer">
+</div>
+<script>
+    function toggle_message_detail(element) {
+        $.ajax({
+            url: "/api/message/" + element.getAttribute('data-message-id'),
+            method: "GET",
+            dataType: "json",
+            success: function (resp) {
+                console.log(JSON.stringify(resp.data));
+                var content_box = $(element).parent().find(".message-content");
+                content_box.text(resp.data.content);
+                content_box.parent().collapse('show');
+            },
+            error: function (xhr) {
+                alert(xhr.responseText);
+            }
+        });
+    }
+</script>
+</body>
+</html>

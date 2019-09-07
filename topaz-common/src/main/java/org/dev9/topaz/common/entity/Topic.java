@@ -1,7 +1,13 @@
 package org.dev9.topaz.common.entity;
 
+import jnr.ffi.annotations.In;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Options;
+import org.springframework.core.annotation.Order;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.time.Instant;
+import java.util.*;
 
 @Entity
 @Table(name = "TOPIC")
@@ -10,33 +16,65 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer topicId;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String title;
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column
-    private Date postTime;
+    @Column(nullable = false)
+    private Instant postTime;
 
-    @Column
-    private Integer posterUserId;
+    @ManyToOne
+    @JoinColumn(name = "poster_uid", nullable = false)
+    private User poster;
 
-    @Column
+    @Column(nullable = false)
     private Integer favoriteCount;
 
-    @Column
+    @Column(nullable = false)
     private Integer visitedCount;
 
-    public Topic(){}
+    @OneToMany(mappedBy = "topic", cascade = {CascadeType.REMOVE})
+    @OrderBy("commentTime ASC")
+    private List<Comment> comments = new ArrayList<>();
 
-    public Topic(String title, String content, Date postTime, Integer posterUserId, Integer favoriteCount, Integer visitedCount) {
+    @Column(name = "is_audited", columnDefinition = "boolean", nullable = false)
+    private Boolean audited;
+
+    public Topic() {
+        this.postTime = Instant.now();
+        this.favoriteCount = 0;
+        this.visitedCount = 0;
+    }
+
+    public Topic(String title, String content, Instant postTime, User poster, Integer favoriteCount, Integer visitedCount, Boolean audited) {
         this.title = title;
         this.content = content;
         this.postTime = postTime;
-        this.posterUserId = posterUserId;
+        this.poster = poster;
         this.favoriteCount = favoriteCount;
         this.visitedCount = visitedCount;
+        this.audited=audited;
+    }
+
+    public String getRenderedContent() {
+        Asciidoctor parser = Asciidoctor.Factory.create();
+        String output = parser.convert(content, new HashMap<String, Object>());
+        return output;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Topic topic = (Topic) o;
+        return topicId.equals(topic.topicId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(topicId);
     }
 
     @Override
@@ -46,10 +84,18 @@ public class Topic {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", postTime=" + postTime +
-                ", posterUserId=" + posterUserId +
+                ", poster=" + poster +
                 ", favoriteCount=" + favoriteCount +
                 ", visitedCount=" + visitedCount +
                 '}';
+    }
+
+    public Boolean getAudited() {
+        return audited;
+    }
+
+    public void setAudited(Boolean audited) {
+        this.audited = audited;
     }
 
     public String getTitle() {
@@ -64,10 +110,6 @@ public class Topic {
         return topicId;
     }
 
-    public void setTopicId(Integer topicId) {
-        this.topicId = topicId;
-    }
-
     public String getContent() {
         return content;
     }
@@ -76,20 +118,20 @@ public class Topic {
         this.content = content;
     }
 
-    public Date getPostTime() {
+    public Instant getPostTime() {
         return postTime;
     }
 
-    public void setPostTime(Date postTime) {
+    public void setPostTime(Instant postTime) {
         this.postTime = postTime;
     }
 
-    public Integer getPosterUserId() {
-        return posterUserId;
+    public User getPoster() {
+        return poster;
     }
 
-    public void setPosterUserId(Integer posterUserId) {
-        this.posterUserId = posterUserId;
+    public void setPoster(User poster) {
+        this.poster = poster;
     }
 
     public Integer getFavoriteCount() {
@@ -106,5 +148,19 @@ public class Topic {
 
     public void setVisitedCount(Integer visitedCount) {
         this.visitedCount = visitedCount;
+    }
+
+    public void addComment(Comment comment) {
+        comment.setTopic(this);
+        comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setTopic(null);
+    }
+
+    public List<Comment> getComments() {
+        return comments;
     }
 }

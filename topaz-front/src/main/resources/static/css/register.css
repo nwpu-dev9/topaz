@@ -1,0 +1,26 @@
+body {
+    background: url("/image/bg.jpg") no-repeat;
+}
+
+.top {
+    text-align: center;
+}
+
+.top img {
+    width: 200px;
+}
+
+.register-form-container {
+    text-align: center;
+}
+
+.main {
+    width: 390px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.main a {
+    display: block;
+    margin: 20px 0 0 240px;
+}

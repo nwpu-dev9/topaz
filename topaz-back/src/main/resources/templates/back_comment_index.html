@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="xwm" content="">
+    <title>Topaz - 话题列表</title>
+    <!-- Bootstrap core CSS-->
+    <div th:replace="back_common::dependency"></div>
+    <script>
+        function delete_id(id) {
+            $.ajax({
+                url: "/api/admin/comment/"+id,
+                type: "delete",
+                success: function (msg) {
+                    $("#list"+id).remove();
+                }
+            })
+        }
+    </script>
+</head>
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+
+<div th:replace="back_common::manage-head"></div>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <form action="/admin/comment" method="get" class="form-inline">
+                <input name="query" th:type="text" placeholder="查找回复" class="form-control">
+                <button class="search-button btn btn-outline-light" type="submit">
+                    <span class="fas fa-search"></span>
+                </button>
+            </form>
+        </ol>
+        <!-- Example DataTables Card-->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-table"></i> 回复列表</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>回复ID</th>
+                            <th>回复时间</th>
+                            <th>回复话题</th>
+                            <th>回复者</th>
+                            <th>回复内容</th>
+                            <th>删除</th>
+                        </tr>
+                        <tfoot>
+                        <nav id="post-nav">
+                                <span class="prev">
+                                    <a th:href="@{/admin/comment/(page=${page -1}, limit=${limit})}" th:if="${page}>0">
+                                       <span class="button">上一页</span>
+                                    </a>
+                                 </span>
+                            <span class="next">
+                                <a th:href="@{/admin/comment/(page=${page +1}, limit=${limit})}" th:if="${page} < ${pageCount -1}">
+                                    <span class="button">下一页</span>
+                                </a>
+                                </span>
+                        </nav>
+                        </tfoot>
+                        <tr th:each="comment:${comments}" th:id="'list' + ${comment.commentId}">
+                            <td ><a th:text="${comment.commentId}" th:href="|/comment/${comment.commentId}|"></a></td>
+                            <td th:text="${comment.commentTime}"></td>
+                            <td th:text="${comment.topic.title}"></td>
+                            <td th:text="${comment.commenter.name}"></td>
+                            <td> <div class="dropdown-message small" th:text="${comment.content}"></div></td>
+                            <td><button class="btn-outline-light" th:onclick="'delete_id('+${comment.commentId}+');'" style="background-color: #c82333; width: 70px; height: 30px"><span class="text-lg-center">×</span></button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Logout Modal-->
+        <div th:replace="back_common::logout-part"></div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<!-- Core plugin JavaScript-->
+<script th:src="@{/js/jquery.easing.min.js}"></script>
+<!-- Page level plugin JavaScript-->
+<script th:src="@{/js/jquery.dataTables.js}"></script>
+<script th:src="@{/js/dataTables.bootstrap4.js}"></script>
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin.min.js}"></script>
+<!-- Custom scripts for this page-->
+<script th:src="@{/js/sb-admin-datatables.min.js}"></script>
+
+</body>
+</html>

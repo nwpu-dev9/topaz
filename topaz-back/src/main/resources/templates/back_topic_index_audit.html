@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="xwm" content="">
+    <title>Topaz - 话题列表</title>
+    <!-- Bootstrap core CSS-->
+    <div th:replace="back_common::dependency"></div>
+    <script>
+        function check_success(id) {
+            $.ajax({
+                url: "/api/admin/topic/"+ id +"/audited",
+                type:"post",
+                data:{
+                    "audited" : true
+                },
+                success: function (msg) {
+                    $("#list"+id).remove();
+                }
+            })
+        }
+
+        function check_fail(id) {
+            $.ajax({
+                url: "/api/admin/topic/"+id,
+                type: "delete",
+                success: function (msg) {
+                    $("#list"+id).remove();
+                }
+            })
+        }
+    </script>
+</head>
+
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+
+<div th:replace="back_common::manage-head"></div>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <form action="/admin/topic" method="get" class="form-inline">
+                <input name="query" th:type="text" placeholder="查找话题" class="form-control">
+                <button class="search-button btn btn-outline-light" type="submit">
+                    <span class="fas fa-search"></span>
+                </button>
+            </form>
+        </ol>
+
+        <!-- Example DataTables Card-->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-table"></i>话题列表</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>话题ID</th>
+                            <th>话题发表时间</th>
+                            <th>话题标题</th>
+                            <th>评论数</th>
+                            <th>通过/驳回</th>
+                        </tr>
+                        <tfoot>
+                        <nav id="post-nav">
+                                <span class="prev">
+                                    <a th:href="@{/admin/topic/audit/(page=${page -1}, limit=${limit})}" th:if="${page}>0">
+                                       <span class="button">上一页</span>
+                                    </a>
+                                 </span>
+                            <span class="next">
+                                <a th:href="@{/admin/topic/audit/(page=${page +1}, limit=${limit})}" th:if="${page} < ${pageCount -1}">
+                                    <span class="button">下一页</span>
+                                </a>
+                                </span>
+                        </nav>
+                        </tfoot>
+
+                        <div id="topic-list">
+                            <tr th:each="topic:${topics}" th:id="'list' + ${topic.topicId}" >
+                                <td><a th:text="${topic.topicId}" th:href="|/topic/${topic.topicId}|"></a></td>
+                                <td th:text="${topic.postTime}"></td>
+                                <td th:text="${topic.title}"></td>
+                                <td th:text="${topic.comments.size()}"></td>
+                                <td><button class="btn-outline-light" th:onclick="'check_success('+${topic.topicId}+');'" style="background-color: #28a745; width: 70px; height: 30px" ><span class="text-lg-center">√</span></button>
+                                    <button class="btn-outline-light" th:onclick="'check_fail('+${topic.topicId}+');'" style="background-color: #c82333; width: 70px; height: 30px"><span class="text-lg-center">×</span></button>
+                                </td>
+                            </tr>
+                        </div>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Logout Modal-->
+        <div th:replace="back_common::logout-part"></div>
+    </div>
+</div>
+
+</body>
+</html>
