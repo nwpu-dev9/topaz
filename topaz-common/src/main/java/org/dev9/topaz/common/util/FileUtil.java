@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.time.Instant;
 
 public class FileUtil {
-    private static final String PATH = WebConfig.ENV_RESOURCE_PATH + "/image";
+    private static final String PATH= WebConfig.ENV_RESOURCE_PATH+"/unchecked";
 
     public static String saveMultipartFile(MultipartFile file) throws Exception {
         checkPathExists();

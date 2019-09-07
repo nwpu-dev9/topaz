@@ -1,6 +1,5 @@
 package org.dev9.topaz.api.controller;
 
-import jnr.ffi.annotations.In;
 import org.dev9.topaz.api.exception.ApiNotFoundException;
 import org.dev9.topaz.api.exception.ApiUnauthorizedException;
 import org.dev9.topaz.api.model.RESTfulResponse;
@@ -127,7 +126,6 @@ public class UserController {
         RESTfulResponse<List<TopicSearchResultImpl>> response=RESTfulResponse.ok();
         // response.setData(favorites);
         response.setData(results);
-
         return ResponseEntity.ok(response);
     }
 

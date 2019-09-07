@@ -1,5 +1,6 @@
 package org.dev9.topaz.runner;
 
+import org.dev9.topaz.common.configuration.RabbitMqConfig;
 import org.dev9.topaz.common.dao.repository.CommentRepository;
 import org.dev9.topaz.common.dao.repository.MessageRepository;
 import org.dev9.topaz.common.dao.repository.TopicRepository;
@@ -9,26 +10,32 @@ import org.dev9.topaz.common.entity.Message;
 import org.dev9.topaz.common.entity.Topic;
 import org.dev9.topaz.common.entity.User;
 import org.dev9.topaz.common.util.SensitiveWordUtil;
+import org.springframework.amqp.core.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;
 
 public class StartupListener {
-    public StartupListener(TopicRepository topicRepository, CommentRepository commentRepository, UserRepository userRepository, MessageRepository messageRepository) {
+    public StartupListener(TopicRepository topicRepository, CommentRepository commentRepository, UserRepository userRepository,
+                           MessageRepository messageRepository, AmqpAdmin amqpAdmin) {
         this.topicRepository = topicRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
+        this.amqpAdmin=amqpAdmin;
     }
 
     private MessageRepository messageRepository;
     private TopicRepository topicRepository;
     private CommentRepository commentRepository;
     private UserRepository userRepository;
+    private AmqpAdmin amqpAdmin;
 
     public void run() {
         initUtils();
+        initRabbitMQ();
 
         Random random = new Random();
         User user1 = new User("张三", null, "passwd", null, false);
@@ -65,5 +72,15 @@ public class StartupListener {
         }
 
         // System.out.println(SensitiveWordUtil.filter("钦定接班人"));
+    }
+
+    private void initRabbitMQ(){
+        amqpAdmin.declareExchange(new TopicExchange("topaz.exchange"));
+
+        for (int i = 0; i<RabbitMqConfig.TOTAL_COUNT; i++) {
+            amqpAdmin.declareQueue(new Queue("topaz.queue"+i, false));
+            amqpAdmin.declareBinding(new Binding("topaz.queue"+i, Binding.DestinationType.QUEUE,
+                    "topaz.exchange", "topaz.route"+i, null));
+        }
     }
 }
